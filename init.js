@@ -31,7 +31,6 @@ function init() {
 	window.game.renderer = renderer;
 	window.game.gameHeigth = gameHeigth;
 	window.game.gameWidth = gameWidth;
-	start();
 }
 
 function loadResources(stage, renderer) {
@@ -80,10 +79,6 @@ function createWorkersContainer(){
 			
 			cardSprite.addChild(resizeSprite);
 
-			cardSprite.click = cardSprite.touchstart = function(ev){
-				console.log("click");
-			}
-
 			addMouseOvers(cardSprite);
 		}
 		else{
@@ -102,34 +97,27 @@ function createBuildingsContainer(){
 	buildingsContainer.position.y = 220;
 
 	var cards = randomCardsList2(6);
+
 	for (var i = 0; i < cards.length; i++) {
 		var cardTexture = PIXI.Texture.fromImage("Resources/buildings/" + cards[i] + ".jpg");
 		var cardSprite = new PIXI.Sprite(cardTexture);
-		cardSprite.hitArea = new PIXI.Rectangle(0, 0, 150, 150);
-
-		var takeSprite = new PIXI.Sprite();
-		takeSprite = icon("takeS", window.game.ActionsModule.takeBuildingAction);
-		takeSprite.position.x = 25;
-
-		cardSprite.addChild(takeSprite);
-
-		var resizeSprite = new PIXI.Sprite();
-		resizeSprite = icon("resizeS", window.game.ActionsModule.resizeBuildingAction);
-		resizeSprite.position.x = 100;
-		cardSprite.addChild(resizeSprite);
+		
 
 		if(i != cards.length - 1)
 		{
+			var takeSprite = new PIXI.Sprite();
+			takeSprite = icon("takeS", window.game.ActionsModule.takeBuildingAction);
+			takeSprite.position.x = 25;
+			cardSprite.addChild(takeSprite);
+
+			var resizeSprite = new PIXI.Sprite();
+			resizeSprite = icon("resizeS", window.game.ActionsModule.resizeBuildingAction);
+			resizeSprite.position.x = 100;
+			cardSprite.addChild(resizeSprite);
+
+			cardSprite.hitArea = new PIXI.Rectangle(0, 0, 150, 150);
 			cardSprite.interactive = true;
 			cardSprite.position.x = i * 153;
-
-			cardSprite.click = function(data){
-				console.log(data);
-			}
-
-			cardSprite.click = cardSprite.touchstart = function(ev){
-				console.log("click");
-			}
 
 			addMouseOvers(cardSprite);
 		}
