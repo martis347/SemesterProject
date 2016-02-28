@@ -3,86 +3,18 @@
     <meta charset="UTF-8">
     <title>Cards Game</title>
     <style>
-      body { background-color: #000000; }
+      body { background-color: #1a1a1a; }
       canvas { background-color: #222222; }
     </style>
   </head>
   <body>
   <body onload="init();"> 
   <div align="center">
-    <canvas id="game-canvas" width="512" height="384"></canvas>
+    <canvas id="game-canvas"></canvas>
   </div>
   <script src="pixi.js"></script>
+  <script src="init.js"></script>
   <script>
-  
-    function init() {
-		var rendererOptions = {
-			antialiasing: true,
-			transparent: false,
-			resolution: window.devicePixelRatio,
-			autoResize: false,
-		}
-		var renderer = PIXI.autoDetectRenderer(window.screen.availHeight, window.screen.availHeight, {view:document.getElementById("game-canvas")});
-		var stage = new PIXI.Container(0x66FF99);	
-		loadCards();
-	
-	
-	function randomCardsList(){
-		var allCards = [21, 22, 23, 24, 31, 32, 33, 34, 41, 42, 43, 44, 51, 52, 53, 54, 61, 62, 63, 64, 71, 72, 73, 74, 
-		81, 82, 83, 84, 91, 92, 93, 94, 101, 102, 103, 104, "J1", "J2", "J3", "J4", "Q1", "Q2", "Q3", "Q4", "K1", "K2", "K3", "K4",
-		"A1", "A2", "A3", "A4","JO1", "JO2"];
-		 
-		var list = [];
-		
-		
-		for(var i = 0; i<6; i++)
-		{
-			var number = Math.floor(Math.random() * 53);
-			if(list.indexOf(allCards[number]) === -1)
-			{
-				list.push(allCards[number]);
-			}
-			else
-			{
-				i--;
-			}
-		}
-		
-		list = [81,82,83,91,92,93]
-		return list;
-	}
-	function loadCards(){
-		var cards = randomCardsList();
-		var offset = 0;
-		cards.forEach(function(card){
-		
-			var cardTexture = PIXI.Texture.fromImage("Resources/cards/" + card + ".png");
-			var cardSprite = new PIXI.Sprite(cardTexture, 700, 500);
-			
-			cardSprite.buttonMode = true;
-			cardSprite.interactive = true;
-			cardSprite.position.x = 100 + offset;
-			cardSprite.position.y = 100;
-			
-			cardSprite.scale.x = 0.5;
-			cardSprite.scale.y = 0.5;
-			
-			stage.addChild(cardSprite);
-			
-			cardSprite.mousedown = cardSprite.touchstart = function(data){
-				console.log(data);
-			}			
-			console.log(card);
-			offset += 60;
-		});
-		requestAnimationFrame(animate);
-		}
-		
-		function animate() {
-				requestAnimationFrame(animate);
-				renderer.render(stage);
-			}
-}		
 	
   </script>
 </body>
