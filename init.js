@@ -1,9 +1,3 @@
-var gameWidth = window.screen.width / 1.1;
-var gameHeigth = window.screen.height / 1.25;
-var scaleRatio = gameWidth / (1920 / 1.1);
-
-document.getElementById('game-canvas').width = gameWidth * scaleRatio;
-document.getElementById('game-canvas').heigth = gameHeigth * scaleRatio;
 
 function init() {
 	var rendererOptions = {
@@ -12,32 +6,32 @@ function init() {
 		resolution: window.devicePixelRatio,
 		autoResize: false,
 	}
-	var renderer = PIXI.autoDetectRenderer(gameWidth, gameHeigth, {view:document.getElementById("game-canvas")}, true);
+	var gameWidth = window.screen.width / 1.1; //1745.4545454545453
+	var gameHeigth = window.screen.height / 1.25; //864
+	var scaleRatio = gameWidth / (1920 / 1.1);
+
+	document.getElementById('game-canvas').width = gameWidth * scaleRatio;
+	document.getElementById('game-canvas').heigth = gameHeigth * scaleRatio;
+
+	var renderer  = PIXI.autoDetectRenderer(gameWidth, gameHeigth, {view:document.getElementById("game-canvas")}, true);
 	var stage = new PIXI.Container(0x66FF99);	
 	stage.scale.x = scaleRatio;
 	stage.scale.y = scaleRatio;
 	stage.interactive = true;
 
-
 	loadResources(stage, renderer);
-
-	var cont = new PIXI.Container();
-	var cardTexture = PIXI.Texture.fromImage("Resources/workers/" + "J1" + ".jpg");
-	var test = new PIXI.Sprite(cardTexture);
-	test.interactive = true;
-	test.hitArea =  new PIXI.Rectangle(0,0, 200, 200);
-	test.click = function(ev) { console.log("clicked"); }
-	test.mouseover = function(ev) { console.log("over"); }
-	test.mouseout = function(ev) { console.log("out"); }
-	test.position.x = 50;
-	test.position.y = 50;
-	cont.addChild(test);
 
 	requestAnimationFrame(animate);
 	function animate() {
 		requestAnimationFrame(animate);
 		renderer.render(stage);
 	}
+
+	window.game.stage = stage;
+	window.game.renderer = renderer;
+	window.game.gameHeigth = gameHeigth;
+	window.game.gameWidth = gameWidth;
+	start();
 }
 
 function loadResources(stage, renderer) {
@@ -49,10 +43,6 @@ function loadResources(stage, renderer) {
 	var buildingsContainer = new createBuildingsContainer();
 	stage.addChild(buildingsContainer);
 }
-
-
-
-
 
 function background() {
 	var backgroundImage = PIXI.Texture.fromImage("Resources/background.jpg");
@@ -74,20 +64,19 @@ function createWorkersContainer(){
 
 		if(i != cards.length - 1)
 		{
-			cardSprite.buttonMode = true;
 			cardSprite.interactive = true;
 			cardSprite.position.x = i * 110;
 			cardSprite.hitArea = new PIXI.Rectangle(0, 0, 107, 150);
 
 			var takeSprite = new PIXI.Sprite();
-			takeSprite = takeIcon();
-			takeSprite.position.x = 70;
+			takeSprite = icon("takeS", window.game.ActionsModule.takeWorkerAction);
+			takeSprite.position.x = 10;
 
 			cardSprite.addChild(takeSprite);
 
 			var resizeSprite = new PIXI.Sprite();
-			resizeSprite = resizeIcon();
-			resizeSprite.position.x = 10;
+			resizeSprite = icon("resizeS", window.game.ActionsModule.resizeWorkerAction);
+			resizeSprite.position.x = 70;
 			
 			cardSprite.addChild(resizeSprite);
 
@@ -95,17 +84,7 @@ function createWorkersContainer(){
 				console.log("click");
 			}
 
-			cardSprite.mouseover = function(ev){
-				this.children.forEach(function(element) {
-					element.visible = true;
-				});
-			}
-
-			cardSprite.mouseout = function(ev) {
-				this.children.forEach(function(element) {
-					element.visible = false;
-				});
-			}
+			addMouseOvers(cardSprite);
 		}
 		else{
 			cardSprite.position.x = 580;
@@ -129,19 +108,18 @@ function createBuildingsContainer(){
 		cardSprite.hitArea = new PIXI.Rectangle(0, 0, 150, 150);
 
 		var takeSprite = new PIXI.Sprite();
-		takeSprite = takeIcon();
+		takeSprite = icon("takeS", window.game.ActionsModule.takeBuildingAction);
 		takeSprite.position.x = 25;
 
 		cardSprite.addChild(takeSprite);
 
 		var resizeSprite = new PIXI.Sprite();
-		resizeSprite = resizeIcon();
+		resizeSprite = icon("resizeS", window.game.ActionsModule.resizeBuildingAction);
 		resizeSprite.position.x = 100;
 		cardSprite.addChild(resizeSprite);
 
 		if(i != cards.length - 1)
 		{
-			cardSprite.buttonMode = true;
 			cardSprite.interactive = true;
 			cardSprite.position.x = i * 153;
 
@@ -153,17 +131,7 @@ function createBuildingsContainer(){
 				console.log("click");
 			}
 
-			cardSprite.mouseover = function(ev){
-				this.children.forEach(function(element) {
-					element.visible = true;
-				});
-			}
-
-			cardSprite.mouseout = function(ev) {
-				this.children.forEach(function(element) {
-					element.visible = false;
-				});
-			}
+			addMouseOvers(cardSprite);
 		}
 		else{
 			cardSprite.position.x = 795;
@@ -175,42 +143,36 @@ function createBuildingsContainer(){
 	return buildingsContainer;
 }
 
-function takeIcon(action){
-	var take = PIXI.Texture.fromImage("Resources/takeS.png");
+function icon(name, action){
+	var take = PIXI.Texture.fromImage("Resources/" + name + ".png");
 	var takeSprite = new PIXI.Sprite(take);
 
 	takeSprite.position.y = 125;
-
+	takeSprite.buttonMode = true;
 	takeSprite.interactive = true;
 	takeSprite.visible = false;
 
-	takeSprite.mouseup = action;
+	takeSprite.click = function (data) {
+		action(this);
+	}
 
 	return takeSprite;
 }
 
-function resizeIcon(action){
-	var resize = new PIXI.Texture.fromImage("Resources/resizeS.png");
-	var resizeSprite = new PIXI.Sprite(resize);
+function addMouseOvers(sprite)
+{
+	sprite.mouseover = function(ev){
+		this.children.forEach(function(element) {
+			element.visible = true;
+		});
+	}
 
-	resizeSprite.position.y = 125;
-
-	resizeSprite.interactive = true;
-	resizeSprite.visible = false;
-
-	resizeSprite.click = action;
-	
-	return resizeSprite;
+	sprite.mouseout = function(ev) {
+		this.children.forEach(function(element) {
+			element.visible = false;
+		});
+	}
 }
-
-function takeWorker(){
-	console.log("You have taken worker!");
-}
-
-function takeBuilding(){
-	console.log("You have taken building!");
-}
-
 function randomCardsList(cardsCount){
 	var allCards = [21, 22, 23, 24, 31, 32, 33, 34, 41, 42, 43, 44, 51, 52, 53, 54, 61, 62, 63, 64, 71, 72, 73, 74, 
 	81, 82, 83, 84, 91, 92, 93, 94, 101, 102, 103, 104, "J1", "J2", "J3", "J4", "Q1", "Q2", "Q3", "Q4", "K1", "K2", "K3", "K4",
