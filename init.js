@@ -72,6 +72,7 @@ function createWorkersContainer(){
 		{
 			cardSprite = createWorkerCard(cardSprite);
 			cardSprite.position.x = i * 110;
+			cardSprite.index = i;
 
 			addMouseOvers(cardSprite);
 		}
@@ -101,6 +102,7 @@ function createBuildingsContainer(){
 		{
 			cardSprite = createBuildingCard(cardSprite);
 			cardSprite.position.x = i * 153;
+			cardSprite.index = i;
 
 			addMouseOvers(cardSprite);
 		}
