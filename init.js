@@ -29,8 +29,9 @@ function init() {
 
 	window.game.stage = stage;
 	window.game.renderer = renderer;
-	window.game.gameHeigth = gameHeigth;
-	window.game.gameWidth = gameWidth;
+	window.game.gameHeigth = 1080 / 1.25;
+	window.game.gameWidth = 1920 / 1.1;
+	window.game.scaleRatio = scaleRatio;
 }
 
 function loadResources(stage, renderer) {

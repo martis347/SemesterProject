@@ -1,5 +1,6 @@
 (function(){
 
+var scale = 3;
 function takeBuildingAction(sprite) {
 }
 
@@ -7,11 +8,11 @@ function resizeBuildingAction(sprite) {
 	var bigTexture = sprite.parent.texture;
 	var bigSprite = new PIXI.Sprite(bigTexture);
 
-	bigSprite.position.x = (window.game.gameWidth / 2) - 450 / 2;
-	bigSprite.position.y = (window.game.gameHeigth / 2) - 450 / 2;
+	bigSprite.position.x = (window.game.gameWidth / 2) - (150 * scale) / 2;//- 450 / 2;
+	bigSprite.position.y = (window.game.gameHeigth / 2) - (150 * scale) / 2;//- 450 / 2;
 
-	bigSprite.scale.x = 3;
-	bigSprite.scale.y = 3;
+	bigSprite.scale.x = scale;
+	bigSprite.scale.y = scale;
 	bigSprite.hitArea = new PIXI.Rectangle(0, 0, 150, 150);
 	bigSprite.interactive = true;
 
@@ -41,11 +42,13 @@ function resizeWorkerAction(sprite) {
 	var bigTexture = sprite.parent.texture;
 	var bigSprite = new PIXI.Sprite(bigTexture);
 
-	bigSprite.position.x = (window.game.gameWidth / 2) - 321 / 2;
-	bigSprite.position.y = (window.game.gameHeigth / 2) - 450 / 2;
 
-	bigSprite.scale.x = 3;
-	bigSprite.scale.y = 3;
+	bigSprite.scale.x = scale;
+	bigSprite.scale.y = scale;
+
+	bigSprite.position.x = (window.game.gameWidth / 2) - (107 * scale) / 2;//- 321 / 2;
+	bigSprite.position.y = (window.game.gameHeigth / 2) - (150 * scale) / 2;// - 450 / 2;
+
 	bigSprite.hitArea = new PIXI.Rectangle(0, 0, 150, 107);
 	bigSprite.interactive = true;
 
