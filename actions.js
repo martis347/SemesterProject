@@ -1,6 +1,15 @@
 (function(){
 
 var scale = 3;
+var buildingCard = {
+	x : 150,
+	y : 150
+}
+var workerCard = {
+	x : 107,
+	y : 150
+}
+
 function takeBuildingAction(sprite) {
 }
 
@@ -8,12 +17,13 @@ function resizeBuildingAction(sprite) {
 	var bigTexture = sprite.parent.texture;
 	var bigSprite = new PIXI.Sprite(bigTexture);
 
-	bigSprite.position.x = (window.game.gameWidth / 2) - (150 * scale) / 2;//- 450 / 2;
-	bigSprite.position.y = (window.game.gameHeigth / 2) - (150 * scale) / 2;//- 450 / 2;
+	bigSprite.position.x = (window.game.gameWidth / 2) - (buildingCard.x * scale) / 2;
+	bigSprite.position.y = (window.game.gameHeigth / 2) - (buildingCard.y * scale) / 2;
 
 	bigSprite.scale.x = scale;
 	bigSprite.scale.y = scale;
-	bigSprite.hitArea = new PIXI.Rectangle(0, 0, 150, 150);
+
+	bigSprite.hitArea = new PIXI.Rectangle(0, 0, buildingCard.x, buildingCard.y);
 	bigSprite.interactive = true;
 
 	closeSprite = icon("exitS", closeBuildingAction);
@@ -46,10 +56,10 @@ function resizeWorkerAction(sprite) {
 	bigSprite.scale.x = scale;
 	bigSprite.scale.y = scale;
 
-	bigSprite.position.x = (window.game.gameWidth / 2) - (107 * scale) / 2;//- 321 / 2;
-	bigSprite.position.y = (window.game.gameHeigth / 2) - (150 * scale) / 2;// - 450 / 2;
+	bigSprite.position.x = (window.game.gameWidth / 2) - (workerCard.x * scale) / 2;
+	bigSprite.position.y = (window.game.gameHeigth / 2) - (workerCard.y * scale) / 2
 
-	bigSprite.hitArea = new PIXI.Rectangle(0, 0, 150, 107);
+	bigSprite.hitArea = new PIXI.Rectangle(0, 0, workerCard.x, workerCard.y);
 	bigSprite.interactive = true;
 
 	closeSprite = icon("exitS", closeWorkerAction);
