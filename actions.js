@@ -130,6 +130,7 @@ function resizeWorkerAction(sprite) {
 
 	bigSprite.hitArea = new PIXI.Rectangle(0, 0, workerCard.x, workerCard.y);
 	bigSprite.interactive = true;
+	bigSprite.index = sprite.parent.index;
 
 	closeSprite = icon("exitS", closeWorkerAction);
 	closeSprite.position.x = 80;
