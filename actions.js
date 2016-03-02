@@ -77,6 +77,37 @@ function closeBuildingAction(sprite) {
 }
 
 function takeWorkerAction(sprite) {
+	addNewWorkerAction(sprite.parent);
+	var container = window.game.stage.children[4];
+
+	var cardSprite = sprite.parent;
+	cardSprite.removeChild(cardSprite.children[0]);
+
+	if(container.children.length >= 5){
+		cardSprite.position.x = (container.children.length % 5) * 60;
+		cardSprite.position.y = 160;
+	}
+	else{
+		cardSprite.position.x = container.children.length * 60;
+		cardSprite.position.y = 0;
+
+	}
+
+	cardSprite.children[0].position.x = 15;
+
+	container.addChild(cardSprite);
+}
+
+function addNewWorkerAction(sprite){
+	var cardTexture = PIXI.Texture.fromImage("Resources/workers/" + getNewCardName2() + ".jpg");
+	var cardSprite = new PIXI.Sprite(cardTexture);
+
+	cardSprite = createWorkerCard(cardSprite);
+	cardSprite.position.x = sprite.position.x;
+
+	addMouseOvers(cardSprite);
+
+	window.game.stage.children[1].addChild(cardSprite);
 }
 
 function resizeWorkerAction(sprite) {
@@ -114,6 +145,9 @@ function closeWorkerAction(sprite) {
 
 function getNewCardName() {
 	return randomCardsList2(1)[0];
+}
+function getNewCardName2() {
+	return randomCardsList(1)[0];
 }
 
 
