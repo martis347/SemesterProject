@@ -27,6 +27,9 @@ function takeBuildingAction(sprite) {
 
 	}
 
+	cardSprite.scale.x = 1;
+	cardSprite.scale.y = 1;
+
 	cardSprite.children[0].position.x = 15;
 
 	container.addChild(cardSprite);
@@ -92,6 +95,9 @@ function takeWorkerAction(sprite) {
 		cardSprite.position.y = 0;
 
 	}
+
+	cardSprite.scale.x = 1;
+	cardSprite.scale.y = 1;
 
 	cardSprite.children[0].position.x = 15;
 
