@@ -42,6 +42,12 @@ function loadResources(stage, renderer) {
 	
 	var buildingsContainer = new createBuildingsContainer();
 	stage.addChild(buildingsContainer);
+
+	var takenBuildingsContainer = new createTakenBuildingsContainer();
+	stage.addChild(takenBuildingsContainer);
+
+	var takenWorkersContainer = new createTakenWorkersContainer();
+	stage.addChild(takenWorkersContainer);
 }
 
 function background() {
@@ -64,21 +70,8 @@ function createWorkersContainer(){
 
 		if(i != cards.length - 1)
 		{
-			cardSprite.interactive = true;
+			cardSprite = createWorkerCard(cardSprite);
 			cardSprite.position.x = i * 110;
-			cardSprite.hitArea = new PIXI.Rectangle(0, 0, 107, 150);
-
-			var takeSprite = new PIXI.Sprite();
-			takeSprite = icon("takeS", window.game.ActionsModule.takeWorkerAction);
-			takeSprite.position.x = 10;
-
-			cardSprite.addChild(takeSprite);
-
-			var resizeSprite = new PIXI.Sprite();
-			resizeSprite = icon("resizeS", window.game.ActionsModule.resizeWorkerAction);
-			resizeSprite.position.x = 70;
-			
-			cardSprite.addChild(resizeSprite);
 
 			addMouseOvers(cardSprite);
 		}
@@ -106,18 +99,7 @@ function createBuildingsContainer(){
 
 		if(i != cards.length - 1)
 		{
-			var takeSprite = new PIXI.Sprite();
-			takeSprite = icon("takeS", window.game.ActionsModule.takeBuildingAction);
-			takeSprite.position.x = 25;
-			cardSprite.addChild(takeSprite);
-
-			var resizeSprite = new PIXI.Sprite();
-			resizeSprite = icon("resizeS", window.game.ActionsModule.resizeBuildingAction);
-			resizeSprite.position.x = 100;
-			cardSprite.addChild(resizeSprite);
-
-			cardSprite.hitArea = new PIXI.Rectangle(0, 0, 150, 150);
-			cardSprite.interactive = true;
+			cardSprite = createBuildingCard(cardSprite);
 			cardSprite.position.x = i * 153;
 
 			addMouseOvers(cardSprite);
@@ -132,24 +114,77 @@ function createBuildingsContainer(){
 	return buildingsContainer;
 }
 
+function createTakenBuildingsContainer(){
+	var takenBuildingsContainer = new PIXI.Container();
+	takenBuildingsContainer.position.x = 1400;
+	takenBuildingsContainer.position.y = 540;
+
+	return takenBuildingsContainer;
+}
+
+function createTakenWorkersContainer(){
+	var takenWorkersContainer = new PIXI.Container();
+	takenWorkersContainer.position.x = 1000;
+	takenWorkersContainer.position.y = 550;
+
+	return takenWorkersContainer;
+}
+
 function icon(name, action){
-	var take = PIXI.Texture.fromImage("Resources/" + name + ".png");
-	var takeSprite = new PIXI.Sprite(take);
+	var texture = PIXI.Texture.fromImage("Resources/" + name + ".png");
+	var sprite = new PIXI.Sprite(texture);
 
-	takeSprite.position.y = 125;
-	takeSprite.buttonMode = true;
-	takeSprite.interactive = true;
-	takeSprite.visible = false;
+	sprite.position.y = 125;
+	sprite.buttonMode = true;
+	sprite.interactive = true;
+	sprite.visible = false;
 
-	takeSprite.click = function (data) {
+	sprite.click = function (data) {
 		action(this);
 	}
 
-	return takeSprite;
+	return sprite;
 }
 
-function addMouseOvers(sprite)
-{
+function createBuildingCard(cardSprite){
+	var takeSprite = new PIXI.Sprite();
+	takeSprite = icon("takeS", window.game.ActionsModule.takeBuildingAction);
+	takeSprite.position.x = 25;
+	cardSprite.addChild(takeSprite);
+
+	var resizeSprite = new PIXI.Sprite();
+	resizeSprite = icon("resizeS", window.game.ActionsModule.resizeBuildingAction);
+	resizeSprite.position.x = 100;
+	cardSprite.addChild(resizeSprite);
+
+	cardSprite.hitArea = new PIXI.Rectangle(0, 0, 150, 150);
+	cardSprite.interactive = true;
+
+	return cardSprite;
+}
+
+function createWorkerCard(cardSprite){
+	cardSprite.interactive = true;
+	cardSprite.hitArea = new PIXI.Rectangle(0, 0, 107, 150);
+
+	var takeSprite = new PIXI.Sprite();
+	takeSprite = icon("takeS", window.game.ActionsModule.takeWorkerAction);
+	takeSprite.position.x = 10;
+
+	cardSprite.addChild(takeSprite);
+
+	var resizeSprite = new PIXI.Sprite();
+	resizeSprite = icon("resizeS", window.game.ActionsModule.resizeWorkerAction);
+	resizeSprite.position.x = 70;
+	
+	cardSprite.addChild(resizeSprite);
+
+	addMouseOvers(cardSprite);
+
+	return cardSprite;
+}
+
+function addMouseOvers(sprite){
 	sprite.mouseover = function(ev){
 		this.children.forEach(function(element) {
 			element.visible = true;
