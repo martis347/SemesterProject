@@ -24,8 +24,10 @@ function takeBuildingAction(sprite) {
 	else{
 		cardSprite.position.x = container.children.length * 60;
 		cardSprite.position.y = 0;
-
 	}
+
+	cardSprite.scale.x = 1;
+	cardSprite.scale.y = 1;
 
 	cardSprite.children[0].position.x = 15;
 
@@ -37,7 +39,8 @@ function addNewBuildingAction(sprite) {
 	var cardSprite = new PIXI.Sprite(cardTexture);
 
 	cardSprite = createBuildingCard(cardSprite);
-	cardSprite.position.x = sprite.position.x;
+	cardSprite.position.x = sprite.index * 153;
+	cardSprite.index = sprite.index;
 
 	addMouseOvers(cardSprite);
 
@@ -56,6 +59,7 @@ function resizeBuildingAction(sprite) {
 
 	bigSprite.hitArea = new PIXI.Rectangle(0, 0, buildingCard.x, buildingCard.y);
 	bigSprite.interactive = true;
+	bigSprite.index = sprite.parent.index;
 
 	closeSprite = icon("exitS", closeBuildingAction);
 	closeSprite.position.x = 123;
@@ -83,15 +87,17 @@ function takeWorkerAction(sprite) {
 	var cardSprite = sprite.parent;
 	cardSprite.removeChild(cardSprite.children[0]);
 
-	if(container.children.length >= 5){
+	if(container.children.length >= 5) {
 		cardSprite.position.x = (container.children.length % 5) * 60;
 		cardSprite.position.y = 160;
 	}
-	else{
+	else {
 		cardSprite.position.x = container.children.length * 60;
 		cardSprite.position.y = 0;
-
 	}
+
+	cardSprite.scale.x = 1;
+	cardSprite.scale.y = 1;
 
 	cardSprite.children[0].position.x = 15;
 
@@ -103,7 +109,8 @@ function addNewWorkerAction(sprite){
 	var cardSprite = new PIXI.Sprite(cardTexture);
 
 	cardSprite = createWorkerCard(cardSprite);
-	cardSprite.position.x = sprite.position.x;
+	cardSprite.position.x = sprite.index * 110;
+	cardSprite.index = sprite.index;
 
 	addMouseOvers(cardSprite);
 
@@ -123,6 +130,7 @@ function resizeWorkerAction(sprite) {
 
 	bigSprite.hitArea = new PIXI.Rectangle(0, 0, workerCard.x, workerCard.y);
 	bigSprite.interactive = true;
+	bigSprite.index = sprite.parent.index;
 
 	closeSprite = icon("exitS", closeWorkerAction);
 	closeSprite.position.x = 80;
