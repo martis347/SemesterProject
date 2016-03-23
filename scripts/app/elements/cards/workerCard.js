@@ -1,4 +1,4 @@
-define(['pixi', 'utils/icon'], function (PIXI, icon) {
+define(['pixi', 'utils/icon', 'utils/mouseOver'], function (PIXI, icon, mouseOvers) {
 
     var workerCard = {
         create: function (id) {
@@ -19,7 +19,7 @@ define(['pixi', 'utils/icon'], function (PIXI, icon) {
 
             cardSprite.addChild(resizeSprite);
 
-            // addMouseOvers(cardSprite);
+            mouseOvers.add(cardSprite);
 
             return cardSprite;
         }
