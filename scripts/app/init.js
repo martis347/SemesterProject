@@ -1,51 +1,27 @@
-define(['pixi', 'app/actions'], function(PIXI, action){
-
-	var gameWidth = window.screen.width / 1.1; //1745.4545454545453
-	var gameHeigth =  window.screen.height / 1.25; //864
-	var scaleRatio = gameWidth / (1920 / 1.1);
-
-	//document.getElementById('game-canvas').width = gameWidth * scaleRatio;
-	//document.getElementById('game-canvas').heigth = gameHeigth * scaleRatio;
-
-	var renderer  = PIXI.autoDetectRenderer(gameWidth, gameHeigth, {view:document.getElementById("game-canvas")}, true);
-	var stage = new PIXI.Container(0x66FF99);	
-	stage.scale.x = scaleRatio;
-	stage.scale.y = scaleRatio;
-	stage.interactive = true;
-
-	loadResources(stage, renderer);
-
+define(['pixi', 'app/gameContainer', 'app/actions'], function(PIXI, gameContainer, action) {
+	loadResources();
 	requestAnimationFrame(animate);
+    
 	function animate() {
 		requestAnimationFrame(animate);
-		renderer.render(stage);
+		gameContainer.renderer.render(gameContainer.stage);
 	}
     
-    var game = {
-        stage : stage,
-        renderer : renderer,
-        gameHeigth : 1080 / 1.25,
-        gameWidth : 1920 / 1.1,
-        scaleRatio : scaleRatio
-    }
-	
-    return game;
 
-
-function loadResources(stage, renderer) {
-	stage.addChild(background());
+function loadResources() {
+	gameContainer.stage.addChild(background());
 
 	var workersContainer = createWorkersContainer();
-	stage.addChild(workersContainer);
+	gameContainer.stage.addChild(workersContainer);
 	
-	var buildingsContainer = new createBuildingsContainer();
-	stage.addChild(buildingsContainer);
+	var buildingsContainer = createBuildingsContainer();
+	gameContainer.stage.addChild(buildingsContainer);
 
-	var takenBuildingsContainer = new createTakenBuildingsContainer();
-	stage.addChild(takenBuildingsContainer);
+	var takenBuildingsContainer = createTakenBuildingsContainer();
+	gameContainer.stage.addChild(takenBuildingsContainer);
 
-	var takenWorkersContainer = new createTakenWorkersContainer();
-	stage.addChild(takenWorkersContainer);
+	var takenWorkersContainer = createTakenWorkersContainer();
+	gameContainer.stage.addChild(takenWorkersContainer);
 }
 
 function background() {

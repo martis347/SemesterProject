@@ -1,4 +1,4 @@
-define(['app/init'], function(init){
+define(['pixi', 'app/gameContainer'], function(PIXI, gameContainer){
 
 var scale = 3;
 var buildingCard = {
@@ -12,7 +12,7 @@ var workerCard = {
 
 function takeBuildingAction(sprite) {
 	addNewBuildingAction(sprite.parent);
-	var container = init.game.stage.children[3];
+	var container = gameContainer.stage.children[3];
 
 	var cardSprite = sprite.parent;
 	cardSprite.removeChild(cardSprite.children[0]);
@@ -44,15 +44,15 @@ function addNewBuildingAction(sprite) {
 
 	addMouseOvers(cardSprite);
 
-	init.game.stage.children[2].addChild(cardSprite);
+	gameContainer.stage.children[2].addChild(cardSprite);
 }
 
 function resizeBuildingAction(sprite) {
 	var bigTexture = sprite.parent.texture;
 	var bigSprite = new PIXI.Sprite(bigTexture);
 
-	bigSprite.position.x = (init.game.gameWidth / 2) - (buildingCard.x * scale) / 2;
-	bigSprite.position.y = (init.game.gameHeigth / 2) - (buildingCard.y * scale) / 2;
+	bigSprite.position.x = (gameContainer.gameWidth / 2) - (buildingCard.x * scale) / 2;
+	bigSprite.position.y = (gameContainer.gameHeigth / 2) - (buildingCard.y * scale) / 2;
 
 	bigSprite.scale.x = scale;
 	bigSprite.scale.y = scale;
@@ -73,7 +73,7 @@ function resizeBuildingAction(sprite) {
 
 	addMouseOvers(bigSprite);
 
-	init.game.stage.addChild(bigSprite);
+	gameContainer.stage.addChild(bigSprite);
 }
 
 function closeBuildingAction(sprite) {
@@ -82,7 +82,7 @@ function closeBuildingAction(sprite) {
 
 function takeWorkerAction(sprite) {
 	addNewWorkerAction(sprite.parent);
-	var container = init.game.stage.children[4];
+	var container = gameContainer.stage.children[4];
 
 	var cardSprite = sprite.parent;
 	cardSprite.removeChild(cardSprite.children[0]);
@@ -114,7 +114,7 @@ function addNewWorkerAction(sprite){
 
 	addMouseOvers(cardSprite);
 
-	init.game.stage.children[1].addChild(cardSprite);
+	gameContainer.stage.children[1].addChild(cardSprite);
 }
 
 function resizeWorkerAction(sprite) {
@@ -125,8 +125,8 @@ function resizeWorkerAction(sprite) {
 	bigSprite.scale.x = scale;
 	bigSprite.scale.y = scale;
 
-	bigSprite.position.x = (init.game.gameWidth / 2) - (workerCard.x * scale) / 2;
-	bigSprite.position.y = (init.game.gameHeigth / 2) - (workerCard.y * scale) / 2
+	bigSprite.position.x = (gameContainer.gameWidth / 2) - (workerCard.x * scale) / 2;
+	bigSprite.position.y = (gameContainer.gameHeigth / 2) - (workerCard.y * scale) / 2
 
 	bigSprite.hitArea = new PIXI.Rectangle(0, 0, workerCard.x, workerCard.y);
 	bigSprite.interactive = true;
@@ -144,7 +144,7 @@ function resizeWorkerAction(sprite) {
 
 	addMouseOvers(bigSprite);
 
-	init.game.stage.addChild(bigSprite);
+	gameContainer.stage.addChild(bigSprite);
 }
 
 function closeWorkerAction(sprite) {
