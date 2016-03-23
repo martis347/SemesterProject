@@ -1,17 +1,11 @@
+define(['pixi', 'app/actions'], function(PIXI, action){
 
-function init() {
-	var rendererOptions = {
-		antialiasing: true,
-		transparent: false,
-		resolution: window.devicePixelRatio,
-		autoResize: false,
-	}
 	var gameWidth = window.screen.width / 1.1; //1745.4545454545453
-	var gameHeigth = window.screen.height / 1.25; //864
+	var gameHeigth =  window.screen.height / 1.25; //864
 	var scaleRatio = gameWidth / (1920 / 1.1);
 
-	document.getElementById('game-canvas').width = gameWidth * scaleRatio;
-	document.getElementById('game-canvas').heigth = gameHeigth * scaleRatio;
+	//document.getElementById('game-canvas').width = gameWidth * scaleRatio;
+	//document.getElementById('game-canvas').heigth = gameHeigth * scaleRatio;
 
 	var renderer  = PIXI.autoDetectRenderer(gameWidth, gameHeigth, {view:document.getElementById("game-canvas")}, true);
 	var stage = new PIXI.Container(0x66FF99);	
@@ -26,13 +20,17 @@ function init() {
 		requestAnimationFrame(animate);
 		renderer.render(stage);
 	}
+    
+    var game = {
+        stage : stage,
+        renderer : renderer,
+        gameHeigth : 1080 / 1.25,
+        gameWidth : 1920 / 1.1,
+        scaleRatio : scaleRatio
+    }
+	
+    return game;
 
-	window.game.stage = stage;
-	window.game.renderer = renderer;
-	window.game.gameHeigth = 1080 / 1.25;
-	window.game.gameWidth = 1920 / 1.1;
-	window.game.scaleRatio = scaleRatio;
-}
 
 function loadResources(stage, renderer) {
 	stage.addChild(background());
@@ -150,12 +148,12 @@ function icon(name, action){
 
 function createBuildingCard(cardSprite){
 	var takeSprite = new PIXI.Sprite();
-	takeSprite = icon("takeS", window.game.ActionsModule.takeBuildingAction);
+	takeSprite = icon("takeS", action.takeBuildingAction);
 	takeSprite.position.x = 25;
 	cardSprite.addChild(takeSprite);
 
 	var resizeSprite = new PIXI.Sprite();
-	resizeSprite = icon("resizeS", window.game.ActionsModule.resizeBuildingAction);
+	resizeSprite = icon("resizeS", action.resizeBuildingAction);
 	resizeSprite.position.x = 100;
 	cardSprite.addChild(resizeSprite);
 
@@ -170,13 +168,13 @@ function createWorkerCard(cardSprite){
 	cardSprite.hitArea = new PIXI.Rectangle(0, 0, 107, 150);
 
 	var takeSprite = new PIXI.Sprite();
-	takeSprite = icon("takeS", window.game.ActionsModule.takeWorkerAction);
+	takeSprite = icon("takeS", action.takeWorkerAction);
 	takeSprite.position.x = 10;
 
 	cardSprite.addChild(takeSprite);
 
 	var resizeSprite = new PIXI.Sprite();
-	resizeSprite = icon("resizeS", window.game.ActionsModule.resizeWorkerAction);
+	resizeSprite = icon("resizeS", action.resizeWorkerAction);
 	resizeSprite.position.x = 70;
 	
 	cardSprite.addChild(resizeSprite);
@@ -243,4 +241,4 @@ function randomCardsList2(cardsCount){
 	}
 	
 	return list;
-}
+}})
