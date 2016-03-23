@@ -6,12 +6,15 @@ define(['pixi', 'utils/randomCards', 'cards/buildingCard'], function (PIXI, rand
     var cards = randomCards.randomCardsList2(6);
 
     for (var i = 0; i < cards.length; i++) {
-        var cardSprite = building.create(cards[i]);
+        var cardSprite;
+        
         if (i != cards.length - 1) {
+            cardSprite = building.create(cards[i], ["take", "resize"]);
             cardSprite.position.x = i * 153;
             cardSprite.index = i;
         }
         else {
+            cardSprite = building.create(cards[i]);
             cardSprite.position.x = 795;
         }
 

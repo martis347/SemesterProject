@@ -61,7 +61,7 @@ define(['pixi', 'app/gameContainer'], function (PIXI, gameContainer) {
         bigSprite.interactive = true;
         bigSprite.index = sprite.parent.index;
 
-        closeSprite = icon("exitS", closeBuildingAction);
+        closeSprite = icon("exit", closeBuildingAction);
         closeSprite.position.x = 123;
         closeSprite.position.y = -8;
         bigSprite.addChild(closeSprite);
@@ -132,7 +132,7 @@ define(['pixi', 'app/gameContainer'], function (PIXI, gameContainer) {
         bigSprite.interactive = true;
         bigSprite.index = sprite.parent.index;
 
-        closeSprite = icon("exitS", closeWorkerAction);
+        closeSprite = icon("exit", closeWorkerAction);
         closeSprite.position.x = 80;
         closeSprite.position.y = -8;
         bigSprite.addChild(closeSprite);
