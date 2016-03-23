@@ -1,5 +1,6 @@
-define(['containers/containers'], function (containers) {
+define(['containers/containers', './background'], function (containers, background) {
     return {
-        containers
+        containers,
+        background
     }
 });

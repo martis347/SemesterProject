@@ -8,7 +8,7 @@ define(['pixi', 'app/gameContainer', 'elements/elements', 'app/actions'], functi
     }
 
     function loadResources() {
-        gameContainer.stage.addChild(background());
+        gameContainer.stage.addChild(elements.background());
 
         gameContainer.stage.addChild(elements.containers.deckBuildings);
         gameContainer.stage.addChild(elements.containers.deckWorkers);
@@ -16,10 +16,5 @@ define(['pixi', 'app/gameContainer', 'elements/elements', 'app/actions'], functi
         gameContainer.stage.addChild(elements.containers.handWorkers);
     }
 
-    function background() {
-        var backgroundImage = PIXI.Texture.fromImage("Resources/background.jpg");
-        var backgroundSprite = new PIXI.Sprite(backgroundImage);
-
-        return backgroundSprite;
-    }
+    
 })
