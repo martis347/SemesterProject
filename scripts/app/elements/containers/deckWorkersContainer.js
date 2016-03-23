@@ -6,8 +6,9 @@ define(['pixi', 'utils/randomCards', 'cards/workerCard'], function (PIXI, random
     var cards = randomCards.randomCardsList(6);
 
     for (var i = 0; i < cards.length; i++) {
+        var cardSprite = worker.create(cards[i]);
+
         if (i != cards.length - 1) {
-            var cardSprite = worker.create(cards[i]);
             cardSprite.position.x = i * 110;
             cardSprite.index = i;
         }

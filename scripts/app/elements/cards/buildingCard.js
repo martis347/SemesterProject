@@ -2,7 +2,7 @@ define(['pixi', 'utils/icon', 'utils/mouseOver'], function (PIXI, icon, mouseOve
 
     var buildingCard = {
         create: function (id) {
-            var cardTexture = PIXI.Texture.fromImage("Resources/workers/" + id + ".jpg");
+            var cardTexture = PIXI.Texture.fromImage("Resources/buildings/" + id + ".jpg");
             var cardSprite = new PIXI.Sprite(cardTexture);
 
             cardSprite.interactive = true;
