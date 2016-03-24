@@ -14,7 +14,5 @@ define(['pixi', 'app/gameContainer', 'elements/elements', 'app/actions'], functi
         gameContainer.stage.addChild(elements.containers.deckWorkers);
         gameContainer.stage.addChild(elements.containers.handBuildings);
         gameContainer.stage.addChild(elements.containers.handWorkers);
-    }
-
-    
-})
+    }    
+});

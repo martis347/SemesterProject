@@ -4,4 +4,4 @@ define(['pixi'], function (PIXI) {
     container.position.y = 540;
 
     return container;
-})
+});
