@@ -1,4 +1,4 @@
-define(['pixi', 'app/gameContainer', 'elements/elements', 'app/actions'], function (PIXI, gameContainer, elements, action) {
+define(['pixi', 'app/gameContainer', 'elements/elements', 'actions/action'], function (PIXI, gameContainer, elements) {
     loadResources();
     requestAnimationFrame(animate);
 

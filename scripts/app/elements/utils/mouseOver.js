@@ -1,5 +1,5 @@
 define(function () {
-    var add = {
+    var mouseOver = {
         add: function (sprite) {
             sprite.mouseover = function (ev) {
                 this.children.forEach(function (element) {
@@ -15,5 +15,5 @@ define(function () {
         }
     }
 
-    return add;
+    return mouseOver;
 });

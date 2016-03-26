@@ -2,6 +2,7 @@ define(['pixi', 'utils/randomCards', 'cards/workerCard'], function (PIXI, random
     var container = new PIXI.Container();
     container.position.x = 1050;
     container.position.y = 380;
+    container.name = "workersDeck";
 
     var cards = randomCards.randomCardsList(6);
 
@@ -11,7 +12,7 @@ define(['pixi', 'utils/randomCards', 'cards/workerCard'], function (PIXI, random
         if (i != cards.length - 1) {
             cardSprite = worker.create(cards[i], ["take", "resize"]);
             cardSprite.position.x = i * 110;
-            cardSprite.index = i;
+            cardSprite.card.index = i;
         }
         else {
             cardSprite = worker.create(cards[i]);
