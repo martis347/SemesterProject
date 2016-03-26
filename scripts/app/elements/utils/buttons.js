@@ -1,45 +1,57 @@
 define(['utils/icon', 'actions/actions'], function(icon, actions) {
     var card;
-    
-    function add(buttons, cardSprite) {
+
+    function add(buttonsPlacementType, cardSprite) {
         card = cardSprite;
 
-        for (var index in buttons) {
-            switch (buttons[index]) {
-                case "take":
-                    takeButton(buttons[index], cardSprite);
-                    break;
-                case "resize":
-                    resizeButton(buttons[index], cardSprite);
-                    break;
-                case "exit":
-                    exitButton(buttons[index], cardSprite);
-                    break;
-                default:
-                    break;
-            }
+        switch (buttonsPlacementType) {
+            case "init":
+                initButtons();
+                break;
+            case "previewDeck":
+                previewDeckButtons();
+                break;
+            case "previewHand":
+                previewHandButtons();
+                break;
+            case "hand":
+                handButtons();
+                break;
+            default:
+                break;
         }
     }
 
-    function takeButton(name) {
-        var sprite = new PIXI.Sprite();
-        sprite = icon.createIcon(name, actions.takeAction);
-        sprite.position.x = 25;
-        card.addChild(sprite);
+    function initButtons() {
+        if(card.card.type == "building") {
+            button("take", actions.takeAction, 25);
+            button("resize", actions.resizeAction, 100);
+        }
+        else if(card.card.type == "worker") {
+            button("take", actions.takeAction, 10);
+            button("resize", actions.resizeAction, 70);
+        }
     }
 
-    function resizeButton(name) {
-        var sprite = new PIXI.Sprite();
-        sprite = icon.createIcon(name, actions.resizeAction);
-        sprite.position.x = 100;
-        card.addChild(sprite);
+    function previewDeckButtons() {
+        button("exit", actions.closeAction, 123, -8);
+        button("take", actions.takeAction, 40);
+    }
+    
+    function previewHandButtons() {
+        button("exit", actions.closeAction, 123, -8);
     }
 
-    function exitButton(name) {
+    function handButtons() {
+        button("resize", actions.resizeAction, 0, 0);
+    }
+
+    function button(name, action, x, y) {
         var sprite = new PIXI.Sprite();
-        sprite = icon.createIcon(name, actions.closeAction);
-        sprite.position.x = 123;
-        sprite.position.y = -8;
+        sprite = icon.createIcon(name, action);
+        if (y) { sprite.position.y = y }
+        if (x) { sprite.position.x = x }
+
         card.addChild(sprite);
     }
 
