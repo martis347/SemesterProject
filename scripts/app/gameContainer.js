@@ -8,12 +8,24 @@ define(['pixi'], function (PIXI) {
     stage.scale.x = scaleRatio;
     stage.scale.y = scaleRatio;
    	stage.interactive = true;
+    var card = {
+        scale: 3,
+        buildingCard: {
+            x: 150,
+            y: 150
+        },
+        workerCard: {
+            x: 107,
+            y: 150
+        }
+    }
 
     return {
         gameWidth,
         gameHeigth,
         scaleRatio,
         renderer,
-        stage
+        stage,
+        card
     }
 });

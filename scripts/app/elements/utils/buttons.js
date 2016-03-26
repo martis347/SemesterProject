@@ -1,4 +1,4 @@
-define(['utils/icon', 'actions/actions'], function(icon, actions) {
+define(['utils/icon', 'actions/actionsContainer'], function(icon, actions) {
     var card;
 
     function add(buttonsPlacementType, cardSprite) {
@@ -34,12 +34,24 @@ define(['utils/icon', 'actions/actions'], function(icon, actions) {
     }
 
     function previewDeckButtons() {
-        button("exit", actions.closeAction, 123, -8);
-        button("take", actions.takeAction, 40);
+        if(card.card.type == "building") {
+            button("exit", actions.closeAction, 123, -8);
+            button("take", actions.takeAction, 40);
+        }
+        else if(card.card.type == "worker") {
+            button("exit", actions.closeAction, 90, -8);
+            button("take", actions.takeAction, 40);
+        }
+        
     }
     
     function previewHandButtons() {
-        button("exit", actions.closeAction, 123, -8);
+        if(card.card.type == "building") {
+            button("exit", actions.closeAction, 123, -8);            
+        }
+        else if(card.card.type == "worker") {
+            button("exit", actions.closeAction, 90, -8);                        
+        }
     }
 
     function handButtons() {
