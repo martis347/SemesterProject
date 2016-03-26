@@ -10,7 +10,8 @@ define(['pixi', 'utils/mouseOver','utils/buttons'], function (PIXI, mouseOvers, 
             cardSprite.hitArea = new PIXI.Rectangle(0, 0, 107, 150);
             cardSprite.card = {};
             cardSprite.card.id = id;
-            
+            cardSprite.card.type = "worker";
+
             buttonsElement.add(buttons, cardSprite);
 
             mouseOvers.add(cardSprite);

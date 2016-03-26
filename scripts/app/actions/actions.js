@@ -1,13 +1,18 @@
 define(function () {
     var action = {
-        takeBuildingAction(card){
-            return require('actions/action').takeBuildingAction(card);
+        takeAction(card){
+            if(card.type === "building") {
+                return require('actions/action').takeBuildingAction(card);   
+            }
+            else if(card.type === "worker"){
+                return require('actions/action').takeWorkerAction(card);                   
+            }
         },
-        resizeBuildingAction(card) {
+        resizeAction(card) {
             return require('actions/action').resizeBuildingAction(card);
         },
-        closeBuildingAction(card) {
-            return require('actions/action').closeBuildingAction(card);
+        closeAction(card) {
+            return require('actions/action').closeAction(card);
         }
     }
     

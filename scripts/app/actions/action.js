@@ -13,6 +13,9 @@ define(['pixi', 'app/gameContainer', 'cards/cards', 'utils/randomCards'], functi
 
 
     function takeBuildingAction(cardInfo) {
+        if(cardInfo.preview){
+            closeAction();
+        }
         var buildingsHand = gameContainer.stage.children.filter(function(item) { return item.name === "buildingsHand" })[0];
         var card = cards.building.create(cardInfo.id, ["take", "resize"]);
 
@@ -54,7 +57,8 @@ define(['pixi', 'app/gameContainer', 'cards/cards', 'utils/randomCards'], functi
     }
 
     function resizeBuildingAction(card) {
-
+        
+        closeAction();
         var bigBuilding = cards.building.create(card.id, ["take", "exit"]);
 
         bigBuilding.position.x = (gameContainer.gameWidth / 2) - (buildingCard.x * scale) / 2;
@@ -65,61 +69,63 @@ define(['pixi', 'app/gameContainer', 'cards/cards', 'utils/randomCards'], functi
 
         bigBuilding.hitArea = new PIXI.Rectangle(0, 0, buildingCard.x, buildingCard.y);
         bigBuilding.interactive = true;
-
-        /*closeSprite = icon("exit", closeBuildingAction);
-        closeSprite.position.x = 123;
-        closeSprite.position.y = -8;
-        bigSprite.addChild(closeSprite);
-
-        takeSprite = icon("takeS", takeBuildingAction);
-        takeSprite.position.x = 60;
-        takeSprite.position.y = 120;
-        bigSprite.addChild(takeSprite);
-
-        addMouseOvers(bigSprite);*/
+        
+        bigBuilding.card.preview = true;
+        bigBuilding.card.index = card.index;
 
         gameContainer.stage.addChild(bigBuilding);
     }
 
-    function closeBuildingAction(sprite) {
-        sprite.parent.parent.removeChild(sprite.parent);
+    function closeAction() {
+        for(var i = 0; i < gameContainer.stage.children.length; i++){
+            if(gameContainer.stage.children[i].card !== undefined && gameContainer.stage.children[i].card.preview){
+                gameContainer.stage.removeChildAt(i);
+            }
+        }
     }
 
-    function takeWorkerAction(sprite) {
-        addNewWorkerAction(sprite.parent);
-        var container = gameContainer.stage.children[4];
+    function takeWorkerAction(cardInfo) {
+        if(cardInfo.preview){
+            closeAction();
+        }
+        var workersHand = gameContainer.stage.children.filter(function(item) { return item.name === "workersHand" })[0];
+        var card = cards.worker.create(cardInfo.id, ["take", "resize"]);
 
-        var cardSprite = sprite.parent;
-        cardSprite.removeChild(cardSprite.children[0]);
-
-        if (container.children.length >= 5) {
-            cardSprite.position.x = (container.children.length % 5) * 60;
-            cardSprite.position.y = 160;
+        if (workersHand.children.length < 4) {
+            card.position.x = workersHand.children.length * 60;
+            card.position.y = 0;
+        }
+        else if (workersHand.children.length < 8) {
+            card.position.x = (workersHand.children.length % 4) * 60;
+            card.position.y = 160;
         }
         else {
-            cardSprite.position.x = container.children.length * 60;
-            cardSprite.position.y = 0;
+            return;
         }
 
-        cardSprite.scale.x = 1;
-        cardSprite.scale.y = 1;
+        addNewWorkerAction(cardInfo);
 
-        cardSprite.children[0].position.x = 15;
-
-        container.addChild(cardSprite);
+        card.children.filter(function(item) { return item.name == "take" }).x = 15;
+        workersHand.addChild(card);
     }
 
-    function addNewWorkerAction(sprite) {
-        var cardTexture = PIXI.Texture.fromImage("Resources/workers/" + getNewCardName2() + ".jpg");
-        var cardSprite = new PIXI.Sprite(cardTexture);
+    function addNewWorkerAction(cardInfo) {
+        var workersDeck = gameContainer.stage.children.filter(function(item) { return item.name === "workersDeck" })[0];
+        var newCard = cards.worker.create(random.randomCardsList(1)[0], ["take", "resize"]);
 
-        cardSprite = createWorkerCard(cardSprite);
-        cardSprite.position.x = sprite.index * 110;
-        cardSprite.index = sprite.index;
-
-        addMouseOvers(cardSprite);
-
-        gameContainer.stage.children[1].addChild(cardSprite);
+        newCard.position.x = cardInfo.index * 110;
+        newCard.card.index = cardInfo.index;
+        
+        var oldCardArrayIndex;
+        for (var i = 0; i < workersDeck.children.length; i++) {
+            if(workersDeck.children[i].card.index === cardInfo.index){
+                oldCardArrayIndex = i;
+                break;
+            }
+        }
+        
+        workersDeck.removeChildAt(oldCardArrayIndex);
+        workersDeck.addChild(newCard);
     }
 
     function resizeWorkerAction(sprite) {
@@ -166,7 +172,7 @@ define(['pixi', 'app/gameContainer', 'cards/cards', 'utils/randomCards'], functi
     return {
         takeBuildingAction,
         resizeBuildingAction,
-        closeBuildingAction,
+        closeAction,
         takeWorkerAction,
         resizeWorkerAction,
         closeWorkerAction
