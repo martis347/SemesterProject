@@ -71,8 +71,8 @@ define(['pixi', 'app/gameContainer', 'cards/cards'], function(PIXI, gameContaine
         close();
         var bigCard = cards.building.create(card.id, "preview" + card.placement);
 
-        bigCard.position.x = (gameContainer.gameWidth / 2);
-        bigCard.position.y = (gameContainer.gameHeigth / 2);
+        bigCard.position.x = (1745 / 2) - (gameContainer.card.buildingCard.x * gameContainer.card.scale) / 2;
+        bigCard.position.y = (864 / 2) - (gameContainer.card.buildingCard.y * gameContainer.card.scale) / 2;
 
         bigCard.scale.x = gameContainer.card.scale;
         bigCard.scale.y = gameContainer.card.scale;
