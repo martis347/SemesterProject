@@ -6,7 +6,8 @@ requirejs.config({
         actions: '../app/actions',
         containers: '../app/elements/containers',
         cards: '../app/elements/cards',
-        utils: '../app/elements/utils'
+        utils: '../app/elements/utils',
+        api: '../app/api'
     },
     shim: {
         "actions": { exports: "actions" },

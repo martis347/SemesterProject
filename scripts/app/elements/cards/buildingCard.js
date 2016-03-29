@@ -11,13 +11,16 @@ define(['pixi', 'utils/mouseOver','utils/buttons'], function (PIXI, mouseOvers, 
             cardSprite.card = {};
             cardSprite.card.id = id;
             cardSprite.card.type = "building";
-            cardSprite.card.inDeck = true;
+            cardSprite.card.placement = "deck";
 
             buttonsElement.add(buttonsPlacementType, cardSprite);
 
             mouseOvers.add(cardSprite);
 
             return cardSprite;
+        },
+        changeTexture: function (card, newId) {
+            card.texture = PIXI.Texture.fromImage("Resources/buildings/" + newId + ".jpg");
         }
     };
 

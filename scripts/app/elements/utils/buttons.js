@@ -4,18 +4,24 @@ define(['utils/icon', 'actions/actionsContainer'], function(icon, actions) {
     function add(buttonsPlacementType, cardSprite) {
         card = cardSprite;
 
-        switch (buttonsPlacementType) {
+        switch (buttonsPlacementType.toLocaleLowerCase()) {
             case "init":
                 initButtons();
                 break;
-            case "previewDeck":
+            case "previewdeck":
                 previewDeckButtons();
                 break;
-            case "previewHand":
+            case "previewhand":
                 previewHandButtons();
+                break;
+            case "previewconstruction":
+                previewConstructionButtons();
                 break;
             case "hand":
                 handButtons();
+                break;
+            case "construction":
+                constructionButtons();
                 break;
             default:
                 break;
@@ -24,38 +30,58 @@ define(['utils/icon', 'actions/actionsContainer'], function(icon, actions) {
 
     function initButtons() {
         if(card.card.type == "building") {
-            button("take", actions.takeAction, 25);
-            button("resize", actions.resizeAction, 100);
+            button("take", actions.take, 25);
+            button("resize", actions.resize, 100);
         }
         else if(card.card.type == "worker") {
-            button("take", actions.takeAction, 10);
-            button("resize", actions.resizeAction, 70);
+            button("take", actions.take, 10);
+            button("resize", actions.resize, 70);
         }
     }
 
     function previewDeckButtons() {
         if(card.card.type == "building") {
-            button("exit", actions.closeAction, 123, -8);
-            button("take", actions.takeAction, 40);
+            button("exit", actions.close, 123, -8);
+            button("take", actions.take, 62);
+            button("flip", actions.flip, 135, 55);
         }
         else if(card.card.type == "worker") {
-            button("exit", actions.closeAction, 90, -8);
-            button("take", actions.takeAction, 40);
+            button("exit", actions.close, 90, -8);
+            button("take", actions.take, 40);
+            button("flip", actions.flip, 90, 55);
         }
         
     }
     
     function previewHandButtons() {
         if(card.card.type == "building") {
-            button("exit", actions.closeAction, 123, -8);            
+            button("exit", actions.close, 123, -8);            
+            button("build", actions.build, 62);            
+            button("flip", actions.flip, 135, 55);
         }
         else if(card.card.type == "worker") {
-            button("exit", actions.closeAction, 90, -8);                        
+            button("exit", actions.close, 90, -8);                        
+            button("flip", actions.flip, 90, 55);
+        }
+    }
+    
+    function previewConstructionButtons() {
+        if(card.card.type == "building") {
+            button("exit", actions.close, 123, -8);            
+            button("flip", actions.flip, 123, 55);
+        }
+        else if(card.card.type == "worker") {
+            button("exit", actions.close, 90, -8);                        
+            button("flip", actions.flip, 90, 55);
         }
     }
 
     function handButtons() {
-        button("resize", actions.resizeAction, 0, 0);
+        button("resize", actions.resize, 0, 0);
+    }
+    
+    function constructionButtons() {
+        button("resize", actions.resize, 0, 0);
     }
 
     function button(name, action, x, y) {

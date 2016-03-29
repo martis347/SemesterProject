@@ -1,4 +1,4 @@
-define(['containers/containers', './background'], function (containers, background) {
+define(['containers/containers', 'elements/background'], function (containers, background) {
     return {
         containers,
         background

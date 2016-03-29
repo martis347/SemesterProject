@@ -15,7 +15,7 @@ define(['pixi', 'utils/randomCards', 'cards/workerCard'], function (PIXI, random
             cardSprite.card.index = i;
         }
         else {
-            cardSprite = worker.create(cards[i]);
+            cardSprite = worker.create(cards[i], "init");
             cardSprite.position.x = 580;
         }
 

@@ -1,14 +1,20 @@
-define(function() {
+define(['api/api'], function(api) {
     var action = {
-        takeAction(card) {
+        take(card) {
             if (card.type === "building") {
-                return require('actions/actionsLoader').buildingActions.takeBuilding(card);
+                var apiResonse = api.takeBuilding(card);
+                if (apiResonse.response) {
+                    return require('actions/actionsLoader').buildingActions.takeBuilding(card, apiResonse.card);
+                }
             }
             else if (card.type === "worker") {
-                return require('actions/actionsLoader').workerActions.takeWorker(card);
+                var apiResonse = api.takeWorker(card);
+                if (apiResonse.response) {
+                    return require('actions/actionsLoader').workerActions.takeWorker(card, apiResonse.card);
+                }
             }
         },
-        resizeAction(card) {
+        resize(card) {
             if (card.type === "building") {
                 return require('actions/actionsLoader').buildingActions.resize(card);
             }
@@ -16,13 +22,28 @@ define(function() {
                 return require('actions/actionsLoader').workerActions.resize(card);
             }
         },
-        closeAction(card) {
+        close(card) {
             if (card.type === "building") {
                 return require('actions/actionsLoader').buildingActions.close(card);
             }
             else if (card.type === "worker") {
                 return require('actions/actionsLoader').workerActions.close(card);
             }
+        },
+        build(card) {
+            var apiResonse = api.startBuilding(card);
+            if (apiResonse.response) {
+                return require('actions/actionsLoader').buildingActions.build(card, apiResonse.card);
+            }
+        },
+        flip(card) {
+            if (card.type === "building") {
+                return require('actions/actionsLoader').buildingActions.flip(card);
+            }
+            else if (card.type === "worker") {
+                return require('actions/actionsLoader').workerActions.flip(card);
+            }
+
         }
     }
 
