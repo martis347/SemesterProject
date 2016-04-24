@@ -93,14 +93,10 @@ define(['pixi', 'app/gameContainer', 'cards/cards'], function(PIXI, gameContaine
         newCard.card.placement = "construction";
         newCard.card.index = emptySpace(construction);
 
-        if (newCard.card.index < 2) {
-            newCard.position.x = newCard.card.index * 160;
-            newCard.position.y = 0;
-        }
-        else if (newCard.card.index < 4) {
-            newCard.position.x = (newCard.card.index % 2) * 160;
-            newCard.position.y = 160;
-        }
+        if (newCard.card.index < 3) {
+            newCard.position.x = 160;
+            newCard.position.y = 150 * newCard.card.index;
+        }      
         else {
             return;
         }
