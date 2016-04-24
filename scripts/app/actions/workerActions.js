@@ -99,7 +99,28 @@ define(['pixi', 'app/gameContainer', 'cards/cards'], function(PIXI, gameContaine
     
     function assign(card, target) {
         console.log("Assigning worker " + card.card.id + " to building " + target);
+        
+        var workersHand = gameContainer.stage.children.filter(function(item) { return item.name === "workersHand" })[0];
+        
+        var newCard = cards.worker.create(card.card.id, "hand");
+        var construction = gameContainer.stage.children.filter(function(item) { return item.name === "construction" })[0];
+        newCard.card.placement = "construction";
+        newCard.card.index = emptySpace(construction);
+        
+        var targetCard = construction.children.filter(function(card){return card.card.id === target;})[0];
+        if (targetCard.workers < 5) {
+            newCard.position.x = targetCard.workers * 50 + 160;
+            targetCard.workers = targetCard.workers + 1;
+        }      
+        else {
+            return;
+        }
+        
         removeCard(gameContainer.stage.children.filter(function(item) { return item.name === "workersHand" })[0], card);
+        
+        targetCard.addChild(newCard);
+        
+
     }
     
     function removeCard(deck, card) {

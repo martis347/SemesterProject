@@ -92,6 +92,7 @@ define(['pixi', 'app/gameContainer', 'cards/cards'], function(PIXI, gameContaine
         var construction = gameContainer.stage.children.filter(function(item) { return item.name === "construction" })[0];
         newCard.card.placement = "construction";
         newCard.card.index = emptySpace(construction);
+        newCard.workers = 0;
 
         if (newCard.card.index < 3) {
             newCard.position.x = 160;
