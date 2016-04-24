@@ -1,4 +1,4 @@
-define(['pixi', 'utils/mouseOver','utils/buttons'], function (PIXI, mouseOvers, buttonsElement) {
+define(['pixi', 'utils/mouseOver', 'utils/buttons', 'app/gameContainer'], function (PIXI, mouseOvers, buttonsElement, gameContainer) {
     
     var cardSprite;
     var card = {
@@ -19,14 +19,15 @@ define(['pixi', 'utils/mouseOver','utils/buttons'], function (PIXI, mouseOvers, 
                 
             if(buttonsPlacementType === "hand")
             {
+                var constructionInfo;
                 cardSprite.buttonMode = true;
                 cardSprite.mousedown = cardSprite.touchstart = function(data)
                 {
                     this.data = data;
                     this.alpha = 0.9;
                     this.dragging = true;
-                    this.sx = this.data.data.getLocalPosition(this).x * cardSprite.scale.x;
-                    this.sy = this.data.data.getLocalPosition(this).y * cardSprite.scale.x;		
+                    this.sx = this.data.data.getLocalPosition(this).x;
+                    this.sy = this.data.data.getLocalPosition(this).y;
                 };
                 
                 cardSprite.mouseup = cardSprite.mouseupoutside = cardSprite.touchend = cardSprite.touchendoutside = function(data)
@@ -36,6 +37,9 @@ define(['pixi', 'utils/mouseOver','utils/buttons'], function (PIXI, mouseOvers, 
                     this.data = null;
                     this.position.x = this.card.init.x;
                     this.position.y = this.card.init.y;
+                    constructionInfo.children.forEach(function(card){
+                        card.tint = "0xFFFFFF";
+                    });
                 };
                 
                 cardSprite.mousemove = cardSprite.touchmove = function(data)
@@ -45,8 +49,36 @@ define(['pixi', 'utils/mouseOver','utils/buttons'], function (PIXI, mouseOvers, 
                         var newPosition = this.data.data.getLocalPosition(this.parent);
                         this.position.x = newPosition.x - this.sx;
                         this.position.y = newPosition.y - this.sy;
+                        
+                        tintBuilding(this);
                     }
                 }
+                
+                function tintBuilding(card) {
+                        var absoluteMousePosition = {};
+                        absoluteMousePosition.x = card.position.x + card.parent.position.x + card.data.data.getLocalPosition(card).x;
+                        absoluteMousePosition.y = card.position.y + card.parent.position.y + card.data.data.getLocalPosition(card).y;
+                        
+                        constructionInfo = gameContainer.stage.children.filter(
+                            function(item) { 
+                                return item.name === "construction" 
+                            })[0];
+                            
+                        constructionInfo.cards.forEach(function (position) {
+                            if(absoluteMousePosition.x - position.x <= gameContainer.card.buildingCard.x && absoluteMousePosition.x - position.x > 0
+                                && absoluteMousePosition.y - position.y <= gameContainer.card.buildingCard.y && absoluteMousePosition.y - position.y > 0) 
+                                {
+                                    constructionInfo.children.filter(function (card) {
+                                        return card.card.id === position.id;
+                                    })[0].tint = "0x66FF66";
+                                }
+                            else {
+                                constructionInfo.children.filter(function (card) {
+                                        return card.card.id === position.id;
+                                    })[0].tint = "0xFFFFFF";
+                            }
+                        });
+                    }
             }
             
             return cardSprite;

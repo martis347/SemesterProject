@@ -105,6 +105,11 @@ define(['pixi', 'app/gameContainer', 'cards/cards'], function(PIXI, gameContaine
         removeCard(gameContainer.stage.children.filter(function(item) { return item.name === "buildingsHand" })[0], card);
 
         construction.addChild(newCard);
+        
+        construction.cards.push({
+            x: newCard.position.x + newCard.parent.position.x,
+            y: newCard.position.y + newCard.parent.position.y,
+            id: newCard.card.id});
     }
 
     function removeCard(deck, card) {

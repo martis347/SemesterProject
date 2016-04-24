@@ -3,6 +3,7 @@ define(['pixi'], function (PIXI) {
     container.position.x = 150;
     container.position.y = 400;
     container.name = "construction";
+    container.cards = [];
 
     return container;
 });
