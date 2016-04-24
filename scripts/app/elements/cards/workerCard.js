@@ -37,9 +37,7 @@ define(['pixi', 'utils/mouseOver', 'utils/buttons', 'app/gameContainer'], functi
                     this.data = null;
                     this.position.x = this.card.init.x;
                     this.position.y = this.card.init.y;
-                    constructionInfo.children.forEach(function(card){
-                        card.tint = "0xFFFFFF";
-                    });
+                    untintAll();                    
                 };
                 
                 cardSprite.mousemove = cardSprite.touchmove = function(data)
@@ -50,35 +48,48 @@ define(['pixi', 'utils/mouseOver', 'utils/buttons', 'app/gameContainer'], functi
                         this.position.x = newPosition.x - this.sx;
                         this.position.y = newPosition.y - this.sy;
                         
-                        tintBuilding(this);
+                        var cardId = touchesBuilding(this);
+                        if(cardId != -1) {
+                            untintAll();
+                            constructionInfo.children.filter(function (card) {
+                                        return card.card.id === cardId;
+                                    })[0].tint = "0x66FF66";
+                        }
+                        else {
+                            untintAll();
+                        }
                     }
                 }
                 
-                function tintBuilding(card) {
-                        var absoluteMousePosition = {};
-                        absoluteMousePosition.x = card.position.x + card.parent.position.x + card.data.data.getLocalPosition(card).x;
-                        absoluteMousePosition.y = card.position.y + card.parent.position.y + card.data.data.getLocalPosition(card).y;
-                        
-                        constructionInfo = gameContainer.stage.children.filter(
-                            function(item) { 
-                                return item.name === "construction" 
-                            })[0];
-                            
-                        constructionInfo.cards.forEach(function (position) {
-                            if(absoluteMousePosition.x - position.x <= gameContainer.card.buildingCard.x && absoluteMousePosition.x - position.x > 0
-                                && absoluteMousePosition.y - position.y <= gameContainer.card.buildingCard.y && absoluteMousePosition.y - position.y > 0) 
-                                {
-                                    constructionInfo.children.filter(function (card) {
-                                        return card.card.id === position.id;
-                                    })[0].tint = "0x66FF66";
-                                }
-                            else {
-                                constructionInfo.children.filter(function (card) {
-                                        return card.card.id === position.id;
-                                    })[0].tint = "0xFFFFFF";
-                            }
-                        });
-                    }
+                function touchesBuilding(card) {
+                    var absoluteMousePosition = {};
+                    absoluteMousePosition.x = card.position.x + card.parent.position.x + card.data.data.getLocalPosition(card).x;
+                    absoluteMousePosition.y = card.position.y + card.parent.position.y + card.data.data.getLocalPosition(card).y;
+                    
+                    constructionInfo = gameContainer.stage.children.filter(
+                        function(item) { 
+                            return item.name === "construction" 
+                        })[0];
+                    var result = -1;
+                    constructionInfo.cards.forEach(function (position) {
+                        if(absoluteMousePosition.x - position.x <= gameContainer.card.buildingCard.x && absoluteMousePosition.x - position.x > 0
+                            && absoluteMousePosition.y - position.y <= gameContainer.card.buildingCard.y && absoluteMousePosition.y - position.y > 0) {
+                                
+                            result = position.id;
+                            return position.id;
+                        }
+                        else {
+                            return -1;
+                        }
+                    });
+                    return result; 
+                }
+                
+                function untintAll() {
+                    constructionInfo.children.forEach(function(card){
+                        card.tint = "0xFFFFFF";
+                    });
+                }
             }
             
             return cardSprite;

@@ -95,7 +95,7 @@ define(['pixi', 'app/gameContainer', 'cards/cards'], function(PIXI, gameContaine
 
         if (newCard.card.index < 3) {
             newCard.position.x = 160;
-            newCard.position.y = 150 * newCard.card.index;
+            newCard.position.y = 155 * newCard.card.index;
         }      
         else {
             return;
