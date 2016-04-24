@@ -12,14 +12,13 @@ define(['pixi', 'utils/mouseOver','utils/buttons'], function (PIXI, mouseOvers, 
             cardSprite.card.type = "worker";
             cardSprite.card.placement = "deck";
 
-            if(buttonsPlacementType !== "hand")
-            {
-                buttonsElement.add(buttonsPlacementType, cardSprite);
+            buttonsElement.add(buttonsPlacementType, cardSprite);
 
-                cardSprite.dragging
-                mouseOvers.add(cardSprite);
-            }
-            else {
+            cardSprite.dragging
+            mouseOvers.add(cardSprite);
+                
+            if(buttonsPlacementType === "hand")
+            {
                 cardSprite.buttonMode = true;
                 cardSprite.mousedown = cardSprite.touchstart = function(data)
                 {
