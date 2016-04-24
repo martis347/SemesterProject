@@ -99,6 +99,18 @@ define(['pixi', 'app/gameContainer', 'cards/cards'], function(PIXI, gameContaine
     
     function assign(card, target) {
         console.log("Assigning worker " + card.card.id + " to building " + target);
+        removeCard(gameContainer.stage.children.filter(function(item) { return item.name === "workersHand" })[0], card);
+    }
+    
+    function removeCard(deck, card) {
+        var oldCardArrayIndex;
+        for (var i = 0; i < deck.children.length; i++) {
+            if (deck.children[i].card.index === card.card.index) {
+                oldCardArrayIndex = i;
+                break;
+            }
+        }
+        deck.removeChildAt(oldCardArrayIndex);
     }
     
     function flip(card) {
