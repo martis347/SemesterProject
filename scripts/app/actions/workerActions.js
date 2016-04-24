@@ -19,6 +19,10 @@ define(['pixi', 'app/gameContainer', 'cards/cards'], function(PIXI, gameContaine
         else {
             return;
         }
+        
+        newCard.card.init = {};
+        newCard.card.init.x = newCard.position.x;
+        newCard.card.init.y = newCard.position.y;
 
         replaceWorker(card, drawnCard);
 

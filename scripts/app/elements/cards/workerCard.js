@@ -34,6 +34,8 @@ define(['pixi', 'utils/mouseOver','utils/buttons'], function (PIXI, mouseOvers, 
                     this.alpha = 1
                     this.dragging = false;
                     this.data = null;
+                    this.position.x = this.card.init.x;
+                    this.position.y = this.card.init.y;
                 };
                 
                 cardSprite.mousemove = cardSprite.touchmove = function(data)
