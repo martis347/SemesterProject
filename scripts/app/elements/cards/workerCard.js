@@ -1,4 +1,4 @@
-define(['pixi', 'utils/mouseOver', 'utils/buttons', 'app/gameContainer'], function (PIXI, mouseOvers, buttonsElement, gameContainer) {
+define(['pixi', 'utils/mouseOver', 'utils/buttons', 'app/gameContainer', 'actions/actionsContainer'], function (PIXI, mouseOvers, buttonsElement, gameContainer, actions) {
     
     var cardSprite;
     var card = {
@@ -20,6 +20,7 @@ define(['pixi', 'utils/mouseOver', 'utils/buttons', 'app/gameContainer'], functi
             if(buttonsPlacementType === "hand")
             {
                 var constructionInfo;
+                var touches;
                 cardSprite.buttonMode = true;
                 cardSprite.mousedown = cardSprite.touchstart = function(data)
                 {
@@ -37,7 +38,11 @@ define(['pixi', 'utils/mouseOver', 'utils/buttons', 'app/gameContainer'], functi
                     this.data = null;
                     this.position.x = this.card.init.x;
                     this.position.y = this.card.init.y;
-                    untintAll();                    
+                    untintAll();  
+                    
+                    if(touches != -1 && touches != undefined) {
+                        actions.assign(this, touches);
+                    }                  
                 };
                 
                 cardSprite.mousemove = cardSprite.touchmove = function(data)
@@ -48,11 +53,11 @@ define(['pixi', 'utils/mouseOver', 'utils/buttons', 'app/gameContainer'], functi
                         this.position.x = newPosition.x - this.sx;
                         this.position.y = newPosition.y - this.sy;
                         
-                        var cardId = touchesBuilding(this);
-                        if(cardId != -1) {
+                        touches = touchesBuilding(this);
+                        if(touches != -1) {
                             untintAll();
                             constructionInfo.children.filter(function (card) {
-                                        return card.card.id === cardId;
+                                        return card.card.id === touches;
                                     })[0].tint = "0x66FF66";
                         }
                         else {

@@ -97,6 +97,10 @@ define(['pixi', 'app/gameContainer', 'cards/cards'], function(PIXI, gameContaine
         gameContainer.stage.addChild(bigCard);
     }
     
+    function assign(card, target) {
+        console.log("Assigning worker " + card.card.id + " to building " + target);
+    }
+    
     function flip(card) {
         var cardToChange = gameContainer.stage.children.filter(function(item) { if (item.card) { return item.card.id === card.id } })[0];
         if (card.side === "front") {
@@ -114,6 +118,7 @@ define(['pixi', 'app/gameContainer', 'cards/cards'], function(PIXI, gameContaine
         takeWorker,
         close,
         resize,
+        assign,
         flip
     };
 });

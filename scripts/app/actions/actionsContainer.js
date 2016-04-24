@@ -36,6 +36,12 @@ define(['api/api'], function(api) {
                 return require('actions/actionsLoader').buildingActions.build(card, apiResonse.card);
             }
         },
+        assign(card, target) {
+            var apiResonse = api.assignWorker(card);
+            if (apiResonse.response) {
+                return require('actions/actionsLoader').workerActions.assign(card, target);
+            }
+        },
         flip(card) {
             if (card.type === "building") {
                 return require('actions/actionsLoader').buildingActions.flip(card);
