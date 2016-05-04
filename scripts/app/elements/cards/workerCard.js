@@ -3,7 +3,7 @@ define(['pixi', 'utils/mouseOver', 'utils/buttons', 'app/gameContainer', 'action
     var cardSprite;
     var card = {
         create: function (id, buttonsPlacementType) {
-            var cardTexture = PIXI.Texture.fromImage("Resources/workers/" + id + ".jpg");
+            var cardTexture = PIXI.Texture.fromImage("Resources/workers/" + id + ".png");
             cardSprite = new PIXI.Sprite(cardTexture);
 
             cardSprite.interactive = true;
@@ -100,7 +100,7 @@ define(['pixi', 'utils/mouseOver', 'utils/buttons', 'app/gameContainer', 'action
             return cardSprite;
         },
         changeTexture: function (card, newId) {
-            card.texture = PIXI.Texture.fromImage("Resources/workers/" + newId + ".jpg");
+            card.texture = PIXI.Texture.fromImage("Resources/workers/" + newId + ".png");
         }
     };
     
