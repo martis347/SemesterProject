@@ -2,8 +2,8 @@ define(['pixi', 'utils/mouseOver','utils/buttons'], function (PIXI, mouseOvers, 
 
     var cardSprite;
     var card = {
-        create: function (id, buttonsPlacementType) {
-            var cardTexture = PIXI.Texture.fromImage("Resources/buildings/" + id + ".png");
+        create: function (id, buttonsPlacementType, cardSize, cardSide) {
+            var cardTexture = PIXI.Texture.fromImage("Resources/buildings/" + id + cardSize + cardSide + ".png");
             cardSprite = new PIXI.Sprite(cardTexture);
             cardSprite.interactive = true;
             cardSprite.hitArea = new PIXI.Rectangle(0, 0, 150, 150);
@@ -11,15 +11,14 @@ define(['pixi', 'utils/mouseOver','utils/buttons'], function (PIXI, mouseOvers, 
             cardSprite.card.id = id;
             cardSprite.card.type = "building";
             cardSprite.card.placement = "deck";
-
             buttonsElement.add(buttonsPlacementType, cardSprite);
 
             mouseOvers.add(cardSprite);
 
             return cardSprite;
         },
-        changeTexture: function (card, newId) {
-            card.texture = PIXI.Texture.fromImage("Resources/buildings/" + newId + ".png");
+        changeTexture: function (card, newId, cardSize, cardSide) {
+            card.texture = PIXI.Texture.fromImage("Resources/buildings/" + newId + cardSize + cardSide + ".png");
         }
     };
 

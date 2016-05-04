@@ -3,7 +3,7 @@ define(['app/gameContainer', 'cards/cards'], function(gameContainer, cards) {
         var buildingsDeck = gameContainer.stage.children.filter(function(item) { return item.name === "buildingsDeck" })[0];
 
         var cardFromTop = buildingsDeck.children[5];
-        var newCard = cards.building.create(newCardInfo.id, "init");
+        var newCard = cards.building.create(newCardInfo.id, "init", "S","F");
 
         cardFromTop.position.x = takenCard.index * 153;
         cardFromTop.card.index = takenCard.index;

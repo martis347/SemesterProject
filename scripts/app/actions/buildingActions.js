@@ -5,7 +5,7 @@ define(['pixi', 'app/gameContainer', 'cards/cards'], function(PIXI, gameContaine
         }
         
         var buildingsHand = gameContainer.stage.children.filter(function(item) { return item.name === "buildingsHand" })[0];
-        var newCard = cards.building.create(card.id, "hand");
+        var newCard = cards.building.create(card.id, "hand","S","F");
         newCard.card.placement = "hand";
         newCard.card.index = emptySpace(buildingsHand);
 
@@ -45,7 +45,7 @@ define(['pixi', 'app/gameContainer', 'cards/cards'], function(PIXI, gameContaine
         var buildingsDeck = gameContainer.stage.children.filter(function(item) { return item.name === "buildingsDeck" })[0];
         
         var cardFromTop = buildingsDeck.children[5];
-        var newCard = cards.building.create(drawnCard.id, "init");
+        var newCard = cards.building.create(drawnCard.id, "init", "S", "F");
 
         cardFromTop.position.x = card.index * 153;
         cardFromTop.card.index = card.index;
@@ -69,7 +69,7 @@ define(['pixi', 'app/gameContainer', 'cards/cards'], function(PIXI, gameContaine
     function resize(card) {
 
         close();
-        var bigCard = cards.building.create(card.id, "preview" + card.placement);
+        var bigCard = cards.building.create(card.id, "preview" + card.placement, "B", "F");
 
         bigCard.position.x = (1745 / 2) - (gameContainer.card.buildingCard.x * gameContainer.card.scale) / 2;
         bigCard.position.y = (864 / 2) - (gameContainer.card.buildingCard.y * gameContainer.card.scale) / 2;
@@ -88,7 +88,7 @@ define(['pixi', 'app/gameContainer', 'cards/cards'], function(PIXI, gameContaine
     }
 
     function build(card) {
-        var newCard = cards.building.create(card.id, "construction");
+        var newCard = cards.building.create(card.id, "construction", "S", "F");
         var construction = gameContainer.stage.children.filter(function(item) { return item.name === "construction" })[0];
         newCard.card.placement = "construction";
         newCard.card.index = emptySpace(construction);
@@ -125,11 +125,11 @@ define(['pixi', 'app/gameContainer', 'cards/cards'], function(PIXI, gameContaine
     function flip(card) {
         var cardToChange = gameContainer.stage.children.filter(function(item) { if (item.card) { return item.card.id === card.id } })[0];
         if (card.side === "front") {
-            cards.building.changeTexture(cardToChange, "J1");
+            cards.building.changeTexture(cardToChange,card.id,"B","B");
             cardToChange.card.side = "back";
         }
         else {
-            cards.building.changeTexture(cardToChange, card.id);   
+            cards.building.changeTexture(cardToChange, card.id,"B","F");   
             cardToChange.card.side = "front";                     
         }
         console.log("A");

@@ -2,8 +2,8 @@ define(['pixi', 'utils/mouseOver','utils/buttons'], function (PIXI, mouseOvers, 
     
     var cardSprite;
     var card = {
-        create: function (id, buttonsPlacementType) {
-            var cardTexture = PIXI.Texture.fromImage("Resources/workers/" + id + ".png");
+        create: function (id, buttonsPlacementType, cardSize) {
+            var cardTexture = PIXI.Texture.fromImage("Resources/workers/" + id + cardSize + ".png");
             cardSprite = new PIXI.Sprite(cardTexture);
 
             cardSprite.interactive = true;
@@ -19,8 +19,8 @@ define(['pixi', 'utils/mouseOver','utils/buttons'], function (PIXI, mouseOvers, 
 
             return cardSprite;
         },
-        changeTexture: function (card, newId) {
-            card.texture = PIXI.Texture.fromImage("Resources/workers/" + newId + ".png");
+        changeTexture: function (card, newId, cardSize) {
+            card.texture = PIXI.Texture.fromImage("Resources/workers/" + newId + cardSize + ".png");
         }
     };
     

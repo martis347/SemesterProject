@@ -10,12 +10,12 @@ define(['pixi', 'utils/randomCards', 'cards/workerCard'], function (PIXI, random
         var cardSprite;
 
         if (i != cards.length - 1) {
-            cardSprite = worker.create(cards[i], "init");
+            cardSprite = worker.create(cards[i], "init","S");
             cardSprite.position.x = i * 110;
             cardSprite.card.index = i;
         }
         else {
-            cardSprite = worker.create(cards[i], "init");
+            cardSprite = worker.create(cards[i], "init","S");
             cardSprite.position.x = 580;
         }
 

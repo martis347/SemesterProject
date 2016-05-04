@@ -72,7 +72,6 @@ define(['utils/icon', 'actions/actionsContainer'], function(icon, actions) {
         }
         else if(card.card.type == "worker") {
             button("exit", actions.close, 90, -8);                        
-            button("flip", actions.flip, 90, 55);
         }
     }
 

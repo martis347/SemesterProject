@@ -4,7 +4,7 @@ define(['pixi', 'app/gameContainer', 'cards/cards'], function(PIXI, gameContaine
             close();
         }
         var workersHand = gameContainer.stage.children.filter(function(item) { return item.name === "workersHand" })[0];
-        var newCard = cards.worker.create(card.id, "hand");
+        var newCard = cards.worker.create(card.id, "hand", "S");
         newCard.card.placement = "construction";
         newCard.card.index = emptySpace(workersHand);
 
@@ -44,7 +44,7 @@ define(['pixi', 'app/gameContainer', 'cards/cards'], function(PIXI, gameContaine
         var workersDeck = gameContainer.stage.children.filter(function(item) { return item.name === "workersDeck" })[0];
         
         var cardFromTop = workersDeck.children[5];
-        var newCard = cards.worker.create(drawnCard.id, "init");
+        var newCard = cards.worker.create(drawnCard.id, "init","S");
 
         cardFromTop.position.x = card.index * 110;
         cardFromTop.card.index = card.index;
@@ -75,7 +75,7 @@ define(['pixi', 'app/gameContainer', 'cards/cards'], function(PIXI, gameContaine
     function resize(card) {
         
         close();
-        var bigCard = cards.worker.create(card.id, "preview" + card.placement);
+        var bigCard = cards.worker.create(card.id, "preview" + card.placement,"B");
 
         bigCard.position.x = (1745 / 2) - (gameContainer.card.workerCard.x * gameContainer.card.scale) / 2;
         bigCard.position.y = (864 / 2) - (gameContainer.card.workerCard.y * gameContainer.card.scale) / 2;
