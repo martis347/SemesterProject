@@ -3,9 +3,8 @@ define(['pixi', 'utils/mouseOver','utils/buttons'], function (PIXI, mouseOvers, 
     var cardSprite;
     var card = {
         create: function (id, buttonsPlacementType) {
-            var cardTexture = PIXI.Texture.fromImage("Resources/buildings/" + id + ".jpg");
+            var cardTexture = PIXI.Texture.fromImage("Resources/buildings/" + id + ".png");
             cardSprite = new PIXI.Sprite(cardTexture);
-
             cardSprite.interactive = true;
             cardSprite.hitArea = new PIXI.Rectangle(0, 0, 150, 150);
             cardSprite.card = {};
@@ -20,7 +19,7 @@ define(['pixi', 'utils/mouseOver','utils/buttons'], function (PIXI, mouseOvers, 
             return cardSprite;
         },
         changeTexture: function (card, newId) {
-            card.texture = PIXI.Texture.fromImage("Resources/buildings/" + newId + ".jpg");
+            card.texture = PIXI.Texture.fromImage("Resources/buildings/" + newId + ".png");
         }
     };
 
