@@ -17,6 +17,7 @@ define(['pixi', 'cards/buildingCard', 'api/init/init'], function (PIXI, building
         else {
             cardSprite = building.create(cards[i], "S", "F", "init");
             cardSprite.position.x = 795;
+            cardSprite.card.index = i;
         }
 
         container.addChild(cardSprite);

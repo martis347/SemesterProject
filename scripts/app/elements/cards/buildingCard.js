@@ -1,4 +1,4 @@
-define(['pixi', 'utils/mouseOver', 'utils/buttons'], function (PIXI, mouseOvers, buttonsElement) {
+define(['pixi', 'utils/mouseOver', 'utils/buttons','app/gameContainer'], function (PIXI, mouseOvers, buttonsElement, gameContainer) {
 
     var cardSprite;
     var card = {
@@ -6,7 +6,7 @@ define(['pixi', 'utils/mouseOver', 'utils/buttons'], function (PIXI, mouseOvers,
             var cardTexture = PIXI.Texture.fromImage("Resources/buildings/" + id + size + side + ".png");
             cardSprite = new PIXI.Sprite(cardTexture);
             cardSprite.interactive = true;
-            cardSprite.hitArea = new PIXI.Rectangle(0, 0, 150, 150);
+            cardSprite.hitArea = new PIXI.Rectangle(0, 0, gameContainer.card.buildingCard.x, gameContainer.card.buildingCard.y);
             cardSprite.card = {};
             cardSprite.card.id = id;
             cardSprite.card.type = "building";
