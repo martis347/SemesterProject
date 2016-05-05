@@ -5,7 +5,7 @@ define(['pixi', 'utils/mouseOver', 'utils/buttons', 'app/gameContainer', 'action
         create: function (id, size, buttonsPlacementType) {
             var cardTexture = PIXI.Texture.fromImage("Resources/workers/" + id + size + ".png");
             cardSprite = new PIXI.Sprite(cardTexture);
-
+            cardSprite.hitArea = new PIXI.Rectangle(0, 0, 450, 450);
             cardSprite.interactive = true;
             cardSprite.card = {};
             cardSprite.card.id = id;
@@ -14,7 +14,6 @@ define(['pixi', 'utils/mouseOver', 'utils/buttons', 'app/gameContainer', 'action
 
             buttonsElement.add(buttonsPlacementType, cardSprite);
 
-            cardSprite.dragging
             mouseOvers.add(cardSprite);
                 
             if(buttonsPlacementType === "hand")

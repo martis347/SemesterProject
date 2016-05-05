@@ -4,7 +4,7 @@ define(['pixi', 'app/gameContainer', 'cards/cards'], function(PIXI, gameContaine
             close();
         }
         var workersHand = gameContainer.stage.children.filter(function(item) { return item.name === "workersHand" })[0];
-        var newCard = cards.worker.create(card.id, "S", "F", "hand");
+        var newCard = cards.worker.create(card.id, "S", "hand");
         newCard.card.placement = "construction";
         newCard.card.index = emptySpace(workersHand);
 
@@ -48,7 +48,7 @@ define(['pixi', 'app/gameContainer', 'cards/cards'], function(PIXI, gameContaine
         var workersDeck = gameContainer.stage.children.filter(function(item) { return item.name === "workersDeck" })[0];
         
         var cardFromTop = workersDeck.children[5];
-        var newCard = cards.worker.create(drawnCard.id, "S", "F", "init");
+        var newCard = cards.worker.create(drawnCard.id, "S", "init");
 
         cardFromTop.position.x = card.index * 110;
         cardFromTop.card.index = card.index;
@@ -79,15 +79,12 @@ define(['pixi', 'app/gameContainer', 'cards/cards'], function(PIXI, gameContaine
     function resize(card) {
         
         close();
-        var bigCard = cards.worker.create(card.id, "B", "F", "preview" + card.placement);
+        var bigCard = cards.worker.create(card.id, "B", "preview" + card.placement);
 
         bigCard.position.x = (1745 / 2) - (gameContainer.card.workerCard.x * gameContainer.card.scale) / 2;
         bigCard.position.y = (864 / 2) - (gameContainer.card.workerCard.y * gameContainer.card.scale) / 2;
 
-        bigCard.scale.x = gameContainer.card.scale;
-        bigCard.scale.y = gameContainer.card.scale;
-
-        bigCard.hitArea = new PIXI.Rectangle(0, 0, gameContainer.card.workerCard.x, gameContainer.card.workerCard.y);
+        bigCard.hitArea = new PIXI.Rectangle(0, 0, gameContainer.card.workerCard.x * gameContainer.card.scale, gameContainer.card.workerCard.y * gameContainer.card.scale);
         bigCard.interactive = true;
         
         bigCard.card.preview = true;
@@ -102,7 +99,7 @@ define(['pixi', 'app/gameContainer', 'cards/cards'], function(PIXI, gameContaine
         
         var workersHand = gameContainer.stage.children.filter(function(item) { return item.name === "workersHand" })[0];
         
-        var newCard = cards.worker.create(card.card.id, "S", "F", "hand");
+        var newCard = cards.worker.create(card.card.id, "S", "hand");
         var construction = gameContainer.stage.children.filter(function(item) { return item.name === "construction" })[0];
         newCard.card.placement = "construction";
         newCard.card.index = emptySpace(construction);

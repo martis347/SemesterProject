@@ -46,9 +46,9 @@ define(['utils/icon', 'actions/actionsContainer'], function(icon, actions) {
             button("flipB", actions.flip, 421, 200);
         }
         else if(card.card.type == "worker") {
-            button("exitB", actions.close, 90, -8);
-            button("takeB", actions.take, 40);
-            button("flipB", actions.flip, 90, 55);
+            button("exitB", actions.close, 270, -35);
+            button("takeB", actions.take, 100, 380);
+            button("flipB", actions.flip, 280, 180);
         }
         
     }
@@ -60,8 +60,8 @@ define(['utils/icon', 'actions/actionsContainer'], function(icon, actions) {
             button("flipB", actions.flip, 421, 200);
         }
         else if(card.card.type == "worker") {
-            button("exitB", actions.close, 90, -8);                        
-            button("flipB", actions.flip, 90, 55);
+            button("exitB", actions.close, 270, -35);                        
+            button("flipB", actions.flip, 280, 180);
         }
     }
     
@@ -71,8 +71,8 @@ define(['utils/icon', 'actions/actionsContainer'], function(icon, actions) {
             button("flipB", actions.flip, 421, 200);
         }
         else if(card.card.type == "worker") {
-            button("exitB", actions.close, 90, -8);                        
-            button("flipB", actions.flip, 90, 55);
+            button("exitB", actions.close,270, -35);                        
+            button("flipB", actions.flip, 280, 180);
         }
     }
 
