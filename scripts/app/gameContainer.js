@@ -1,5 +1,6 @@
 define(['pixi'], function (PIXI) {
-
+    var apiUri = "http://localhost:5000/";
+    var userData;
     var gameWidth = window.screen.width / 1.1; //1745.4545454545453
     var gameHeigth = window.screen.height / 1.25; //864
     var scaleRatio = gameWidth / (1920 / 1.1);
@@ -26,6 +27,8 @@ define(['pixi'], function (PIXI) {
         scaleRatio,
         renderer,
         stage,
-        card
+        card,
+        apiUri,
+        userData
     }
 });

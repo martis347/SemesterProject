@@ -1,5 +1,3 @@
 define(['utils/randomCards'], function(cards){
-    return function () {
-        return cards.getRandomCardsList(6);
-    }
+    return cards.randomCardsList(6);
 })

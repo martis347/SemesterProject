@@ -1,10 +1,10 @@
-define(['pixi', 'utils/randomCards', 'cards/workerCard'], function (PIXI, randomCards, worker) {
+define(['pixi', 'cards/workerCard', 'api/init/init'], function (PIXI, worker, init) {
     var container = new PIXI.Container();
     container.position.x = 1050;
     container.position.y = 380;
     container.name = "workersDeck";
 
-    var cards = randomCards.randomCardsList(6);
+    var cards = init.workers();
 
     for (var i = 0; i < cards.length; i++) {
         var cardSprite;
