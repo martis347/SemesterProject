@@ -1,13 +1,22 @@
-define(['utils/randomCards'], function(random) {
+define(['jquery', 'app/gameContainer'], function($, gameContainer){
     return function(card) {
-        //api call to back-end
-        console.log("API SAYS TAKE WORKER");
         
+        var result;
+    
+        $.ajax({
+            type: "POST",
+            url: gameContainer.apiUri + "api/game/worker/take",
+            success: function (response) {
+                result = response
+            },
+            async: false,
+            data: {GameGuid: gameContainer.userData.gameGuid, PlayerGuid: gameContainer.userData.playerGuid, WorkerId: card.id}
+        });
+
         return {
-            response: true,
-            card: {
-                id: random.randomCardsList(1)[0]
-            }
+            response: result.Success,
+            card: result.NewCard,
+            message: result.message
         }
     }
 });

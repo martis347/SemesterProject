@@ -48,7 +48,7 @@ define(['pixi', 'app/gameContainer', 'cards/cards'], function(PIXI, gameContaine
         var workersDeck = gameContainer.stage.children.filter(function(item) { return item.name === "workersDeck" })[0];
         
         var cardFromTop = workersDeck.children[5];
-        var newCard = cards.worker.create(drawnCard.id, "S", "init");
+        var newCard = cards.worker.create(drawnCard, "S", "init");
 
         cardFromTop.position.x = card.index * 110;
         cardFromTop.card.index = card.index;

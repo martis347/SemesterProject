@@ -5,7 +5,7 @@ define(['jquery', 'app/gameContainer'], function($, gameContainer){
         type: "POST",
         url: gameContainer.apiUri + "api/game/state",
         success: function (response) {
-            result = response.Game.GameBoard.Workers
+            result = response.Game.GameBoard
         },
         async: false,
         data: {GameGuid: gameContainer.userData.gameGuid, PlayerGuid: gameContainer.userData.playerGuid}

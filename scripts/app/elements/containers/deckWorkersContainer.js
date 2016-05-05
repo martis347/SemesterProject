@@ -6,22 +6,20 @@ define(['pixi', 'cards/workerCard', 'api/init/init'], function (PIXI, worker, in
 
     var cards = init.workers;
 
-    for (var i = 0; i < cards.length; i++) {
+    for (var i = 0; i < cards.Workers.length; i++) {
         var cardSprite;
-
-        if (i != cards.length - 1) {
-            cardSprite = worker.create(cards[i], "S", "init");
-            cardSprite.position.x = i * 110;
-            cardSprite.card.index = i;
-        }
-        else {
-            cardSprite = worker.create(cards[i], "S", "init");
-            cardSprite.position.x = 580;
-            cardSprite.card.index = i;
-        }
+        
+        cardSprite = worker.create(cards.Workers[i], "S", "init");
+        cardSprite.position.x = i * 110;
+        cardSprite.card.index = i;
 
         container.addChild(cardSprite);
     }
+    
+    cardSprite = worker.create(cards.TopWorker, "S", "init");
+    cardSprite.position.x = 580;
+    cardSprite.card.index = i;
+    container.addChild(cardSprite);
 
     return container;
 });
