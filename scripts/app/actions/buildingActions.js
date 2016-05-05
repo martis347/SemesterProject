@@ -74,7 +74,7 @@ define(['pixi', 'app/gameContainer', 'cards/cards'], function(PIXI, gameContaine
         bigCard.position.x = (1745 / 2) - (gameContainer.card.buildingCard.x * gameContainer.card.scale) / 2;
         bigCard.position.y = (864 / 2) - (gameContainer.card.buildingCard.y * gameContainer.card.scale) / 2;
 
-        bigCard.hitArea = new PIXI.Rectangle(0, 0, gameContainer.card.buildingCard.x, gameContainer.card.buildingCard.y);
+        bigCard.hitArea = new PIXI.Rectangle(0, 0, gameContainer.card.buildingCard.x * gameContainer.card.scale, gameContainer.card.buildingCard.y * gameContainer.card.scale);
         bigCard.interactive = true;
 
         bigCard.card.preview = true;
