@@ -48,7 +48,6 @@ define(['utils/icon', 'actions/actionsContainer'], function(icon, actions) {
         else if(card.card.type == "worker") {
             button("exitB", actions.close, 270, -35);
             button("takeB", actions.take, 100, 380);
-            button("flipB", actions.flip, 280, 180);
         }
         
     }
@@ -61,7 +60,6 @@ define(['utils/icon', 'actions/actionsContainer'], function(icon, actions) {
         }
         else if(card.card.type == "worker") {
             button("exitB", actions.close, 270, -35);                        
-            button("flipB", actions.flip, 280, 180);
         }
     }
     
@@ -72,7 +70,6 @@ define(['utils/icon', 'actions/actionsContainer'], function(icon, actions) {
         }
         else if(card.card.type == "worker") {
             button("exitB", actions.close,270, -35);                        
-            button("flipB", actions.flip, 280, 180);
         }
     }
 

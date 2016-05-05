@@ -43,13 +43,7 @@ define(['api/api'], function(api) {
             }
         },
         flip(card) {
-            if (card.type === "building") {
-                return require('actions/actionsLoader').buildingActions.flip(card);
-            }
-            else if (card.type === "worker") {
-                return require('actions/actionsLoader').workerActions.flip(card);
-            }
-
+            return require('actions/actionsLoader').buildingActions.flip(card);
         }
     }
 

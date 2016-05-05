@@ -131,24 +131,10 @@ define(['pixi', 'app/gameContainer', 'cards/cards'], function(PIXI, gameContaine
         deck.removeChildAt(oldCardArrayIndex);
     }
     
-    function flip(card) {
-        var cardToChange = gameContainer.stage.children.filter(function(item) { if (item.card) { return item.card.id === card.id } })[0];
-        if (card.side === "F") {
-            cards.worker.changeTexture(cardToChange, "S", card.side, "J1");
-            cardToChange.card.side = "B";
-        }
-        else {
-            cards.worker.changeTexture(cardToChange, "S", card.side, card.id);   
-            cardToChange.card.side = "F";                     
-        }
-        console.log("A");
-    }
-    
     return { 
         takeWorker,
         close,
         resize,
-        assign,
-        flip
+        assign
     };
 });

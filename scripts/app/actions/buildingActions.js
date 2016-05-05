@@ -124,12 +124,12 @@ define(['pixi', 'app/gameContainer', 'cards/cards'], function(PIXI, gameContaine
     function flip(card) {
         var cardToChange = gameContainer.stage.children.filter(function(item) { if (item.card) { return item.card.id === card.id } })[0];
         if (card.side === "F") {
-            cards.building.changeTexture(cardToChange, "S", card.side, "J1");
             cardToChange.card.side = "B";
+            cards.building.changeTexture(cardToChange, card.id, "B", card.side);
         }
         else {
-            cards.building.changeTexture(cardToChange, "S", card.side, card.id);   
             cardToChange.card.side = "F";                     
+            cards.building.changeTexture(cardToChange, card.id, "B", card.side);   
         }
         console.log("A");
     }
