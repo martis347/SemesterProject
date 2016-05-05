@@ -10,12 +10,12 @@ define(['pixi', 'cards/buildingCard', 'api/init/init'], function (PIXI, building
         var cardSprite;
         
         if (i != cards.length - 1) {
-            cardSprite = building.create(cards[i], "init");
+            cardSprite = building.create(cards[i], "S", "F", "init");
             cardSprite.position.x = i * 153;
             cardSprite.card.index = i;
         }
         else {
-            cardSprite = building.create(cards[i], "init");
+            cardSprite = building.create(cards[i], "S", "F", "init");
             cardSprite.position.x = 795;
         }
 
