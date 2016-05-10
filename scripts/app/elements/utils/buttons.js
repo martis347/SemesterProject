@@ -41,37 +41,35 @@ define(['utils/icon', 'actions/actionsContainer'], function(icon, actions) {
 
     function previewDeckButtons() {
         if(card.card.type == "building") {
-            button("exit", actions.close, 123, -8);
-            button("take", actions.take, 62);
-            button("flip", actions.flip, 135, 55);
+            button("exit", actions.close, 7, 7);
+            button("take", actions.take, 200,425);
+            button("flip", actions.flip, 350, 200);
         }
         else if(card.card.type == "worker") {
-            button("exit", actions.close, 90, -8);
-            button("take", actions.take, 40);
-            button("flip", actions.flip, 90, 55);
+            button("exit", actions.close, 7, 7);
+            button("take", actions.take, 150,425);
         }
         
     }
     
     function previewHandButtons() {
         if(card.card.type == "building") {
-            button("exit", actions.close, 123, -8);            
-            button("build", actions.build, 62);            
-            button("flip", actions.flip, 135, 55);
+            button("exit", actions.close, 7, 7);            
+            button("build", actions.build, 200,425);            
+            button("flip", actions.flip, 350, 200);
         }
         else if(card.card.type == "worker") {
-            button("exit", actions.close, 90, -8);                        
-            button("flip", actions.flip, 90, 55);
+            button("exit", actions.close, 7,7);                        
         }
     }
     
     function previewConstructionButtons() {
         if(card.card.type == "building") {
-            button("exit", actions.close, 123, -8);            
-            button("flip", actions.flip, 123, 55);
+            button("exit", actions.close, 7, 7);            
+            button("flip", actions.flip, 350, 200);
         }
         else if(card.card.type == "worker") {
-            button("exit", actions.close, 90, -8);                        
+            button("exit", actions.close, 7,7);                        
         }
     }
 
