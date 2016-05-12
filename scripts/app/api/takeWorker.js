@@ -14,9 +14,9 @@ define(['jquery', 'app/gameContainer'], function($, gameContainer){
         });
 
         return {
-            response: result.Success,
-            card: result.NewCard,
-            message: result.message
+            response: result.response.Success,
+            card: result.response.NewCard,
+            message: result.response.message
         }
     }
 });
