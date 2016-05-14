@@ -1,5 +1,5 @@
 define(['pixi', 'app/gameContainer', 'cards/cards'], function(PIXI, gameContainer, cards) {
-    function takeBuilding(card, drawnCard) {
+    function takeBuilding(card, apiCards) {
         if (card.preview) {
             close();
         }
@@ -21,7 +21,7 @@ define(['pixi', 'app/gameContainer', 'cards/cards'], function(PIXI, gameContaine
             return;
         }
 
-        replaceBuilding(card, drawnCard);
+        replaceBuilding(card, apiCards);
 
         newCard.children.filter(function(item) { return item.name == "take" }).x = 15;
         buildingsHand.addChildAt(newCard, newCard.card.index);
@@ -41,11 +41,11 @@ define(['pixi', 'app/gameContainer', 'cards/cards'], function(PIXI, gameContaine
         return Math.min.apply(null, allNumbers.filter(function(i) { return cardIndexes.indexOf(i) < 0; }));
     }
 
-    function replaceBuilding(card, drawnCard) {
+    function replaceBuilding(card, apiCards) {
         var buildingsDeck = gameContainer.stage.children.filter(function(item) { return item.name === "buildingsDeck" })[0];
         
         var cardFromTop = buildingsDeck.children[5];
-        var newCard = cards.building.create(drawnCard, "S", "F", "init");
+        var newCard = cards.building.create(apiCards.topCard, "S", "F", "init");
 
         cardFromTop.position.x = card.index * 153;
         cardFromTop.card.index = card.index;
@@ -54,7 +54,6 @@ define(['pixi', 'app/gameContainer', 'cards/cards'], function(PIXI, gameContaine
         newCard.card.index = 5;
 
         removeCard(buildingsDeck, card);
-
         buildingsDeck.addChild(newCard);
     }
 

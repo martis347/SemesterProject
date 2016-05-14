@@ -1,5 +1,5 @@
 define(['pixi', 'app/gameContainer', 'cards/cards'], function(PIXI, gameContainer, cards) {
-    function takeWorker(card, drawnCard) {        
+    function takeWorker(card, apiCards) {        
         if(card.preview){
             close();
         }
@@ -24,7 +24,7 @@ define(['pixi', 'app/gameContainer', 'cards/cards'], function(PIXI, gameContaine
         newCard.card.init.x = newCard.position.x;
         newCard.card.init.y = newCard.position.y;
 
-        replaceWorker(card, drawnCard);
+        replaceWorker(card, apiCards);
 
         newCard.children.filter(function(item) { return item.name == "take" }).x = 15;
         workersHand.addChild(newCard);
@@ -44,11 +44,11 @@ define(['pixi', 'app/gameContainer', 'cards/cards'], function(PIXI, gameContaine
         return Math.min.apply(null, allNumbers.filter(function(i) { return cardIndexes.indexOf(i) < 0; }));
     }
 
-    function replaceWorker(card, drawnCard) {
+    function replaceWorker(card, apiCards) {
         var workersDeck = gameContainer.stage.children.filter(function(item) { return item.name === "workersDeck" })[0];
         
         var cardFromTop = workersDeck.children[5];
-        var newCard = cards.worker.create(drawnCard, "S", "init");
+        var newCard = cards.worker.create(apiCards.topCard, "S", "init");
 
         cardFromTop.position.x = card.index * 110;
         cardFromTop.card.index = card.index;

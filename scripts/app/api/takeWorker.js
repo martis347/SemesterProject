@@ -15,7 +15,10 @@ define(['jquery', 'app/gameContainer'], function($, gameContainer){
 
         return {
             response: result.response.Success,
-            card: result.response.NewCard,
+            card: {
+                topCard: result.response.TopCard,
+                newCard: result.response.NewCard
+            },
             message: result.response.message
         }
     }
