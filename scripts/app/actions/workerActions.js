@@ -3,6 +3,12 @@ define(['pixi', 'app/gameContainer', 'cards/cards'], function(PIXI, gameContaine
         if(card.preview){
             close();
         }
+        if(addCardToHand(card)) {
+            replaceWorker(card, apiCards);
+        }
+    }
+    
+    function addCardToHand(card) {
         var workersHand = gameContainer.stage.children.filter(function(item) { return item.name === "workersHand" })[0];
         var newCard = cards.worker.create(card.id, "S", "hand");
         newCard.card.placement = "construction";
@@ -17,17 +23,18 @@ define(['pixi', 'app/gameContainer', 'cards/cards'], function(PIXI, gameContaine
             newCard.position.y = 160;
         }
         else {
-            return;
+            return false;
         }
         
         newCard.card.init = {};
         newCard.card.init.x = newCard.position.x;
         newCard.card.init.y = newCard.position.y;
 
-        replaceWorker(card, apiCards);
-
         newCard.children.filter(function(item) { return item.name == "take" }).x = 15;
+        
         workersHand.addChild(newCard);
+        
+        return true;
     }
     
     function emptySpace(deck) {
@@ -135,6 +142,7 @@ define(['pixi', 'app/gameContainer', 'cards/cards'], function(PIXI, gameContaine
         takeWorker,
         close,
         resize,
-        assign
+        assign,
+        addCardToHand
     };
 });
