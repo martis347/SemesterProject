@@ -43,6 +43,8 @@ define(['api/api'], function(api) {
                 if(apiResonse.buildingCompleted) {
                     return require('actions/actionsLoader').genericActions.completeBuilding(target);
                 }
+            } else {
+                return require('actions/actionsLoader').alertsActions.coinsAlert();
             }
         },
         flip(card) {

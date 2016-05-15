@@ -1,4 +1,4 @@
-define(['pixi', 'app/gameContainer', 'cards/cards'], function(PIXI, gameContainer, cards) {
+define(['pixi', 'app/gameContainer', 'cards/cards', 'actions/genericActions'], function(PIXI, gameContainer, cards) {
     function takeWorker(card, apiCards) {        
         if(card.preview){
             close();
@@ -6,6 +6,7 @@ define(['pixi', 'app/gameContainer', 'cards/cards'], function(PIXI, gameContaine
         if(addCardToHand(card)) {
             replaceWorker(card, apiCards);
         }
+        
     }
     
     function addCardToHand(card) {
@@ -119,7 +120,7 @@ define(['pixi', 'app/gameContainer', 'cards/cards'], function(PIXI, gameContaine
         else {
             return;
         }
-        
+        updateCoins();
         removeCard(gameContainer.stage.children.filter(function(item) { return item.name === "workersHand" })[0], card);
         
         targetCard.addChild(newCard);
@@ -136,6 +137,22 @@ define(['pixi', 'app/gameContainer', 'cards/cards'], function(PIXI, gameContaine
             }
         }
         deck.removeChildAt(oldCardArrayIndex);
+    }
+    
+    function updateCoins() {
+        var result;
+    
+        $.ajax({
+            type: "POST",
+            url: gameContainer.apiUri + "api/game/state",
+            success: function (response) {
+                result = response.Game.Players.filter(function(player){return player.Guid === gameContainer.userData.playerGuid})[0].PlayerCoins
+            },
+            async: false,
+            data: {GameGuid: gameContainer.userData.gameGuid, PlayerGuid: gameContainer.userData.playerGuid}
+        });
+        
+        gameContainer.stage.children.filter(function(item){return item.playerCoins === true})[0].text = "Coins: " + result;
     }
     
     return { 

@@ -34,5 +34,12 @@ define(['pixi', 'app/gameContainer', 'elements/elements', 'actions/actionsLoader
          points.x = 1500;
          points.y = 10;
          gameContainer.stage.addChild(points);
+         
+         var coins = new PIXI.Text('Coins: 20', textOptions);
+         coins.playerCoins = true;
+         
+         coins.x = 1300;
+         coins.y = 10;
+         gameContainer.stage.addChild(coins);
     }
 });
