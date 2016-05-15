@@ -41,38 +41,35 @@ define(['utils/icon', 'actions/actionsContainer'], function(icon, actions) {
 
     function previewDeckButtons() {
         if(card.card.type == "building") {
-            button("exit", actions.close, 123, -8);
-            button("take", actions.take, 62);
-            button("flip", actions.flip, 135, 55);
+            button("exitB", actions.close, 410, -35);
+            button("takeB", actions.take, 165, 400);
+            button("flipB", actions.flip, 421, 200);
         }
         else if(card.card.type == "worker") {
-            button("exit", actions.close, 90, -8);
-            button("take", actions.take, 40);
-            button("flip", actions.flip, 90, 55);
+            button("exitB", actions.close, 270, -35);
+            button("takeB", actions.take, 100, 380);
         }
         
     }
     
     function previewHandButtons() {
         if(card.card.type == "building") {
-            button("exit", actions.close, 123, -8);            
-            button("build", actions.build, 62);            
-            button("flip", actions.flip, 135, 55);
+            button("exitB", actions.close, 410, -35);            
+            button("buildB", actions.build, 165, 400);            
+            button("flipB", actions.flip, 421, 200);
         }
         else if(card.card.type == "worker") {
-            button("exit", actions.close, 90, -8);                        
-            button("flip", actions.flip, 90, 55);
+            button("exitB", actions.close, 270, -35);                        
         }
     }
     
     function previewConstructionButtons() {
         if(card.card.type == "building") {
-            button("exit", actions.close, 123, -8);            
-            button("flip", actions.flip, 123, 55);
+            button("exitB", actions.close, 410, -35);            
+            button("flipB", actions.flip, 421, 200);
         }
         else if(card.card.type == "worker") {
-            button("exit", actions.close, 90, -8);                        
-            button("flip", actions.flip, 90, 55);
+            button("exitB", actions.close,270, -35);                        
         }
     }
 

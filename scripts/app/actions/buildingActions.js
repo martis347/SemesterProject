@@ -1,11 +1,11 @@
 define(['pixi', 'app/gameContainer', 'cards/cards'], function(PIXI, gameContainer, cards) {
-    function takeBuilding(card, drawnCard) {
+    function takeBuilding(card, apiCards) {
         if (card.preview) {
             close();
         }
         
         var buildingsHand = gameContainer.stage.children.filter(function(item) { return item.name === "buildingsHand" })[0];
-        var newCard = cards.building.create(card.id, "hand");
+        var newCard = cards.building.create(card.id, "S", "F", "hand");
         newCard.card.placement = "hand";
         newCard.card.index = emptySpace(buildingsHand);
 
@@ -21,7 +21,7 @@ define(['pixi', 'app/gameContainer', 'cards/cards'], function(PIXI, gameContaine
             return;
         }
 
-        replaceBuilding(card, drawnCard);
+        replaceBuilding(card, apiCards);
 
         newCard.children.filter(function(item) { return item.name == "take" }).x = 15;
         buildingsHand.addChildAt(newCard, newCard.card.index);
@@ -41,11 +41,11 @@ define(['pixi', 'app/gameContainer', 'cards/cards'], function(PIXI, gameContaine
         return Math.min.apply(null, allNumbers.filter(function(i) { return cardIndexes.indexOf(i) < 0; }));
     }
 
-    function replaceBuilding(card, drawnCard) {
+    function replaceBuilding(card, apiCards) {
         var buildingsDeck = gameContainer.stage.children.filter(function(item) { return item.name === "buildingsDeck" })[0];
         
         var cardFromTop = buildingsDeck.children[5];
-        var newCard = cards.building.create(drawnCard.id, "init");
+        var newCard = cards.building.create(apiCards.topCard, "S", "F", "init");
 
         cardFromTop.position.x = card.index * 153;
         cardFromTop.card.index = card.index;
@@ -54,7 +54,6 @@ define(['pixi', 'app/gameContainer', 'cards/cards'], function(PIXI, gameContaine
         newCard.card.index = 5;
 
         removeCard(buildingsDeck, card);
-
         buildingsDeck.addChild(newCard);
     }
 
@@ -69,26 +68,23 @@ define(['pixi', 'app/gameContainer', 'cards/cards'], function(PIXI, gameContaine
     function resize(card) {
 
         close();
-        var bigCard = cards.building.create(card.id, "preview" + card.placement);
+        var bigCard = cards.building.create(card.id, "B", "F", "preview" + card.placement);
 
         bigCard.position.x = (1745 / 2) - (gameContainer.card.buildingCard.x * gameContainer.card.scale) / 2;
         bigCard.position.y = (864 / 2) - (gameContainer.card.buildingCard.y * gameContainer.card.scale) / 2;
 
-        bigCard.scale.x = gameContainer.card.scale;
-        bigCard.scale.y = gameContainer.card.scale;
-
-        bigCard.hitArea = new PIXI.Rectangle(0, 0, gameContainer.card.buildingCard.x, gameContainer.card.buildingCard.y);
+        bigCard.hitArea = new PIXI.Rectangle(0, 0, gameContainer.card.buildingCard.x * gameContainer.card.scale, gameContainer.card.buildingCard.y * gameContainer.card.scale);
         bigCard.interactive = true;
 
         bigCard.card.preview = true;
         bigCard.card.index = card.index;
-        bigCard.card.side = "front";
+        bigCard.card.side = "F";
 
         gameContainer.stage.addChild(bigCard);
     }
 
     function build(card) {
-        var newCard = cards.building.create(card.id, "construction");
+        var newCard = cards.building.create(card.id, "S", "F", "construction");
         var construction = gameContainer.stage.children.filter(function(item) { return item.name === "construction" })[0];
         newCard.card.placement = "construction";
         newCard.card.index = emptySpace(construction);
@@ -126,13 +122,13 @@ define(['pixi', 'app/gameContainer', 'cards/cards'], function(PIXI, gameContaine
 
     function flip(card) {
         var cardToChange = gameContainer.stage.children.filter(function(item) { if (item.card) { return item.card.id === card.id } })[0];
-        if (card.side === "front") {
-            cards.building.changeTexture(cardToChange, "J1");
-            cardToChange.card.side = "back";
+        if (card.side === "F") {
+            cardToChange.card.side = "B";
+            cards.building.changeTexture(cardToChange, card.id, "B", card.side);
         }
         else {
-            cards.building.changeTexture(cardToChange, card.id);   
-            cardToChange.card.side = "front";                     
+            cardToChange.card.side = "F";                     
+            cards.building.changeTexture(cardToChange, card.id, "B", card.side);   
         }
         console.log("A");
     }

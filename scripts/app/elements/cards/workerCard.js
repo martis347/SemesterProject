@@ -2,10 +2,10 @@ define(['pixi', 'utils/mouseOver', 'utils/buttons', 'app/gameContainer', 'action
     
     var cardSprite;
     var card = {
-        create: function (id, buttonsPlacementType) {
-            var cardTexture = PIXI.Texture.fromImage("Resources/workers/" + id + ".jpg");
+        create: function (id, size, buttonsPlacementType) {
+            var cardTexture = PIXI.Texture.fromImage("Resources/workers/" + id + size + ".png");
             cardSprite = new PIXI.Sprite(cardTexture);
-
+            cardSprite.hitArea = new PIXI.Rectangle(0, 0, gameContainer.card.workerCard.x, gameContainer.card.workerCard.y);
             cardSprite.interactive = true;
             cardSprite.card = {};
             cardSprite.card.id = id;
@@ -14,7 +14,6 @@ define(['pixi', 'utils/mouseOver', 'utils/buttons', 'app/gameContainer', 'action
 
             buttonsElement.add(buttonsPlacementType, cardSprite);
 
-            cardSprite.dragging
             mouseOvers.add(cardSprite);
                 
             if(buttonsPlacementType === "hand")
@@ -99,8 +98,8 @@ define(['pixi', 'utils/mouseOver', 'utils/buttons', 'app/gameContainer', 'action
             
             return cardSprite;
         },
-        changeTexture: function (card, newId) {
-            card.texture = PIXI.Texture.fromImage("Resources/workers/" + newId + ".jpg");
+        changeTexture: function (card, id, size) {
+            card.texture = PIXI.Texture.fromImage("Resources/workers/" + id + size + ".png");
         }
     };
     

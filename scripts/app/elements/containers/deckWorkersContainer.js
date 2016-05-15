@@ -1,26 +1,25 @@
-define(['pixi', 'utils/randomCards', 'cards/workerCard'], function (PIXI, randomCards, worker) {
+define(['pixi', 'cards/workerCard', 'api/init/init'], function (PIXI, worker, init) {
     var container = new PIXI.Container();
     container.position.x = 1050;
     container.position.y = 380;
     container.name = "workersDeck";
 
-    var cards = randomCards.randomCardsList(6);
+    var cards = init.workers;
 
-    for (var i = 0; i < cards.length; i++) {
+    for (var i = 0; i < cards.Workers.length; i++) {
         var cardSprite;
-
-        if (i != cards.length - 1) {
-            cardSprite = worker.create(cards[i], "init");
-            cardSprite.position.x = i * 110;
-            cardSprite.card.index = i;
-        }
-        else {
-            cardSprite = worker.create(cards[i], "init");
-            cardSprite.position.x = 580;
-        }
+        
+        cardSprite = worker.create(cards.Workers[i], "S", "init");
+        cardSprite.position.x = i * 110;
+        cardSprite.card.index = i;
 
         container.addChild(cardSprite);
     }
+    
+    cardSprite = worker.create(cards.TopWorker, "S", "init");
+    cardSprite.position.x = 580;
+    cardSprite.card.index = i;
+    container.addChild(cardSprite);
 
     return container;
 });

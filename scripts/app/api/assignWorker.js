@@ -1,8 +1,20 @@
-define(function() {
-    return function(card) {
-        //api call to back-end
+define(['jquery', 'app/gameContainer'], function($, gameContainer){
+     return function(card, target) {
+        var result;
+    
+        $.ajax({
+            type: "POST",
+            url: gameContainer.apiUri + "api/game/worker/assign",
+            success: function (response) {
+                result = response
+            },
+            async: false,
+            data: {GameGuid: gameContainer.userData.gameGuid, PlayerGuid: gameContainer.userData.playerGuid, BuildingId: target, WorkerId: card.card.id}
+        });
+
         return {
-            response: true
+            success: result.Success,
+            buildingCompleted: result.BuildingCompleted
         }
     }
 });

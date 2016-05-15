@@ -1,7 +1,9 @@
 define(['actions/buildingActions', 
-        'actions/workerActions'], function (buildingActions, workerActions) {
+        'actions/workerActions',
+        'actions/genericActions'], function (buildingActions, workerActions, genericActions) {
     return {
         buildingActions,
-        workerActions
+        workerActions,
+        genericActions
     }
 });

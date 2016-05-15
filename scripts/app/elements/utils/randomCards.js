@@ -1,14 +1,14 @@
 define(function () {
     function randomCardsList(cardsCount) {
-        var allCards = [21, 22, 23, 24, 31, 32, 33, 34, 41, 42, 43, 44, 51, 52, 53, 54, 61, 62, 63, 64, 71, 72, 73, 74,
-            81, 82, 83, 84, 91, 92, 93, 94, 101, 102, 103, 104, "j1", "j2", "j3", "j4", "q1", "q2", "q3", "q4", "k1", "k2", "k3", "k4",
-            "a1", "a2", "a3", "a4", "jo1", "jo2"];
+        var allCards = ["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17",
+        "18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","33","34",
+        "35","36","37","38","39","40","41","42"];
 
         var list = [];
 
 
         for (var i = 0; i < cardsCount; i++) {
-            var number = Math.floor(Math.random() * 53);
+            var number = Math.floor(Math.random() * 42);
             if (list.indexOf(allCards[number]) === -1) {
                 list.push(allCards[number]);
             }
@@ -21,13 +21,14 @@ define(function () {
     }
 
     function randomCardsList2(cardsCount) {
-        var allCards = ["J1", "J2", "J3", "J4", "K1", "K2", "K3", "K4"];
+        var allCards = ["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17",
+        "18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34"];
 
         var list = [];
 
 
         for (var i = 0; i < cardsCount; i++) {
-            var number = Math.floor(Math.random() * 7);
+            var number = Math.floor(Math.random() * 34);
             if (list.indexOf(allCards[number]) === -1) {
                 list.push(allCards[number]);
             }

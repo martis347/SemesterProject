@@ -37,19 +37,19 @@ define(['api/api'], function(api) {
             }
         },
         assign(card, target) {
-            var apiResonse = api.assignWorker(card);
-            if (apiResonse.response) {
-                return require('actions/actionsLoader').workerActions.assign(card, target);
+            var apiResonse = api.assignWorker(card, target);
+            if (apiResonse.success) {
+                require('actions/actionsLoader').workerActions.assign(card, target);
+                if(apiResonse.buildingCompleted) {
+                    return require('actions/actionsLoader').genericActions.completeBuilding(target);
+                }
             }
         },
         flip(card) {
-            if (card.type === "building") {
-                return require('actions/actionsLoader').buildingActions.flip(card);
-            }
-            else if (card.type === "worker") {
-                return require('actions/actionsLoader').workerActions.flip(card);
-            }
-
+            return require('actions/actionsLoader').buildingActions.flip(card);
+        },
+        addCardToHand(card) {
+            return require('actions/actionsLoader').workerActions.addCardToHand(card);
         }
     }
 

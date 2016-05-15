@@ -7,7 +7,8 @@ requirejs.config({
         containers: '../app/elements/containers',
         cards: '../app/elements/cards',
         utils: '../app/elements/utils',
-        api: '../app/api'
+        api: '../app/api',
+        jquery: 'https://code.jquery.com/jquery-2.2.3.min'
     },
     shim: {
         "actions": { exports: "actions" },
