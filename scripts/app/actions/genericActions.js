@@ -16,6 +16,7 @@ define(['pixi', 'app/gameContainer', 'cards/cards', 'actions/actionsContainer', 
         finishedCard.card.index = completedConstructionContainer.children.length;
         
         finishedCard.position.x = finishedCard.card.index * 30;
+        finishedCard.position.y = 0;
         
         completedConstructionContainer.addChild(finishedCard);
         constructionContainer.removeChild(finishedCard);
