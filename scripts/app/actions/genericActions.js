@@ -22,6 +22,7 @@ define(['pixi', 'app/gameContainer', 'cards/cards', 'actions/actionsContainer', 
         constructionContainer.removeChild(finishedCard);
         
         updatePoints();
+        updateCoins();
     }
     
     function updatePoints() {
@@ -39,6 +40,22 @@ define(['pixi', 'app/gameContainer', 'cards/cards', 'actions/actionsContainer', 
         
         gameContainer.stage.children.filter(function(item){return item.victoryPoints === true})[0].text = "Victory Points: " + result;
     }
+    
+    function updateCoins() {
+        var result;
+    
+        $.ajax({
+            type: "POST",
+            url: gameContainer.apiUri + "api/game/state",
+            success: function (response) {
+                result = response.Game.Players.filter(function(player){return player.Guid === gameContainer.userData.playerGuid})[0].PlayerCoins
+            },
+            async: false,
+            data: {GameGuid: gameContainer.userData.gameGuid, PlayerGuid: gameContainer.userData.playerGuid}
+        });
+        
+        gameContainer.stage.children.filter(function(item){return item.playerCoins === true})[0].text = "Coins: " + result;
+    }    
     
     return {
         completeBuilding
