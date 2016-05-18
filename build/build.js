@@ -12,5 +12,5 @@
 		sweetAlert: '../lib/sweetalert.min'
     },
     name: "../main",
-    out: "../main-built.js"
+    out: "../scripts/main-built.js"
 })
