@@ -14,6 +14,14 @@
   </div>
   <script data-main="scripts/main" src="scripts/lib/require.js"></script>
   <link rel="stylesheet" type="text/css" href="scripts/lib/sweetalert.css">
+  <script>
+            require.config({
+                paths: {
+                    "main": "main-built"
+                }
+            });
+            require(["main"]);
+        </script>
 
   
 </body>
