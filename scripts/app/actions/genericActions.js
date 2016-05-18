@@ -1,4 +1,4 @@
-define(['pixi', 'app/gameContainer', 'cards/cards', 'actions/actionsContainer', 'jquery'], function(PIXI, gameContainer, cards, actions, $) {
+define(['pixi', 'gameContainer', 'cards/cards', 'actions/actionsContainer', 'jquery'], function(PIXI, gameContainer, cards, actions, $) {
     function completeBuilding(building) {
         var constructionContainer = gameContainer.stage.children.filter(function(item) { return item.name === "construction" })[0];
         var finishedCard = constructionContainer.children.filter(function(item){return item.card.id === building})[0];

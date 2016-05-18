@@ -1,4 +1,4 @@
-define(['pixi', 'app/gameContainer', 'elements/elements', 'actions/actionsLoader', 'api/api'], function(PIXI, gameContainer, elements, actions, api) {
+define(['pixi', 'gameContainer', 'elements/elements', 'actions/actionsLoader', 'api/api'], function(PIXI, gameContainer, elements, actions, api) {
     if (api.init.start.status) {
         loadResources();
     }

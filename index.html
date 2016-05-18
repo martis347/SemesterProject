@@ -14,8 +14,15 @@
   </div>
   <script data-main="scripts/main" src="scripts/lib/require.js"></script>
   <script>
-	
-  </script>
+            require.config({
+                paths: {
+                    //Comment out this line to go back to loading
+                    //the non-optimized main.js source file.
+                    "main": "main-built"
+                }
+            });
+            require(["main"]);
+        </script>
 </body>
   </body>
 </html>

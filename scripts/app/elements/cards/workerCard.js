@@ -1,4 +1,4 @@
-define(['pixi', 'utils/mouseOver', 'utils/buttons', 'app/gameContainer', 'actions/actionsContainer'], function (PIXI, mouseOvers, buttonsElement, gameContainer, actions) {
+define(['pixi', 'utils/mouseOver', 'utils/buttons', 'gameContainer', 'actions/actionsContainer'], function (PIXI, mouseOvers, buttonsElement, gameContainer, actions) {
     
     var cardSprite;
     var card = {

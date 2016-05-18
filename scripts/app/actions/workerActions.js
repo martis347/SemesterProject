@@ -1,4 +1,4 @@
-define(['pixi', 'app/gameContainer', 'cards/cards'], function(PIXI, gameContainer, cards) {
+define(['pixi', 'gameContainer', 'cards/cards'], function(PIXI, gameContainer, cards) {
     function takeWorker(card, apiCards) {        
         if(card.preview){
             close();

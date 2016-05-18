@@ -1,4 +1,4 @@
-define(['jquery', 'app/gameContainer'], function($, gameContainer){
+define(['jquery', 'gameContainer'], function($, gameContainer){
     return function(card) {
         
         var result;
