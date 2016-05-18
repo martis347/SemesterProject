@@ -1,4 +1,4 @@
-define(['pixi', 'app/gameContainer', 'actions/actionsContainer', 'jquery'], function(PIXI, gameContainer, actions, $) {
+define(['pixi', 'gameContainer', 'actions/actionsContainer', 'jquery', 'sweetAlert'], function(PIXI, gameContainer, actions, $, swal) {
     function coinsAlert() {
         swal({
             title: "Error!",

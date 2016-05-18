@@ -1,4 +1,4 @@
-define(['app/gameContainer', 'cards/cards'], function(gameContainer, cards) {
+define(['gameContainer', 'cards/cards'], function(gameContainer, cards) {
     function take(takenCard, newCardInfo) {
         var workersDeck = gameContainer.stage.children.filter(function(item) { return item.name === "workersDeck" })[0];
         

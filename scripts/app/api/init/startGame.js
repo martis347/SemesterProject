@@ -1,4 +1,4 @@
-define(['jquery', 'app/gameContainer'],function($, gameContainer){
+define(['jquery', 'gameContainer'],function($, gameContainer){
     console.log("Starting game");
     
     var userData, result;
