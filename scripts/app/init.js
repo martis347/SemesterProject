@@ -1,4 +1,5 @@
-define(['pixi', 'gameContainer', 'elements/elements', 'actions/actionsLoader', 'api/api'], function(PIXI, gameContainer, elements, actions, api) {
+define(['pixi', 'gameContainer', 'elements/elements', 'actions/actionsContainer', 'api/api', 'utils/boardButton', 'actions/actionsLoader'], 
+function(PIXI, gameContainer, elements, actions, api, boardButton) {
     return function start(){
         if (api.init.start.status) {
             loadResources();
@@ -42,6 +43,20 @@ define(['pixi', 'gameContainer', 'elements/elements', 'actions/actionsLoader', '
             coins.x = 1300;
             coins.y = 10;
             gameContainer.stage.addChild(coins);
+            
+            var action = new PIXI.Text('Actions: 3', textOptions);
+            action.remainingActions = true;
+            
+            action.x = 1100;
+            action.y = 10;
+            gameContainer.stage.addChild(action);
+            
+            var endTurnButton = new PIXI.Sprite;
+            endTurnButton = boardButton.createIcon("exitB", actions.endTurn);
+            endTurnButton.x = 50;
+            endTurnButton.y = 50;
+            gameContainer.stage.addChild(endTurnButton);
+            
         }
     }
 });

@@ -1,16 +1,20 @@
-define(['api/api'], function(api) {
+define(['api/api'], function (api) {
     var action = {
         take(card) {
             if (card.type === "building") {
                 var apiResonse = api.takeBuilding(card);
                 if (apiResonse.response) {
                     return require('actions/actionsLoader').buildingActions.takeBuilding(card, apiResonse.card);
+                } else {
+                    return require('actions/actionsLoader').alertsActions.actionsAlert();
                 }
             }
             else if (card.type === "worker") {
                 var apiResonse = api.takeWorker(card);
                 if (apiResonse.response) {
                     return require('actions/actionsLoader').workerActions.takeWorker(card, apiResonse.card);
+                } else {
+                    return require('actions/actionsLoader').alertsActions.actionsAlert();
                 }
             }
         },
@@ -34,15 +38,19 @@ define(['api/api'], function(api) {
             var apiResonse = api.startBuilding(card);
             if (apiResonse.response) {
                 return require('actions/actionsLoader').buildingActions.build(card, apiResonse.card);
+            } else {
+                return require('actions/actionsLoader').alertsActions.actionsAlert();
             }
         },
         assign(card, target) {
             var apiResonse = api.assignWorker(card, target);
-            if (apiResonse.success) {
+            if (apiResonse.success && apiResonse.enoughActions) {
                 require('actions/actionsLoader').workerActions.assign(card, target);
-                if(apiResonse.buildingCompleted) {
+                if (apiResonse.buildingCompleted) {
                     return require('actions/actionsLoader').genericActions.completeBuilding(target);
                 }
+            } else if(apiResonse.enoughActions === false) {
+                return require('actions/actionsLoader').alertsActions.actionsAlert();
             } else {
                 return require('actions/actionsLoader').alertsActions.coinsAlert();
             }
@@ -52,6 +60,12 @@ define(['api/api'], function(api) {
         },
         addCardToHand(card) {
             return require('actions/actionsLoader').workerActions.addCardToHand(card);
+        },
+        endTurn() {
+            var apiResponse = api.endTurn();
+            if(apiResponse.response) {
+                return require('actions/actionsLoader').boardButtonsActions.endTurn();
+            }
         }
     }
 

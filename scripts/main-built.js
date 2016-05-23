@@ -29026,7 +29026,7 @@ module.exports = function () {
 
 //# sourceMappingURL=pixi.js.map;
 define('gameContainer',['pixi'], function (PIXI) {
-    var apiUri = "http://matjuu.space:8080/";
+    var apiUri = "http://localhost:5000/";
     var userData;
     var gameWidth = window.screen.width / 1.1; //1745.4545454545453
     var gameHeigth = window.screen.height / 1.25; //864
