@@ -62,44 +62,10 @@ define(['api/api', 'sweetAlert'], function (api, swal) {
             return require('actions/actionsLoader').workerActions.addCardToHand(card);
         },
         endTurn() {
-            swal({
-            title: "Are you sure you want to end turn?",
-            text: "You will end your turn!",
-            type: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#DD6B55",
-            confirmButtonText: "End turn",
-            closeOnConfirm: true
-        },
-        function() {
-            var apiResponse = api.endTurn();
-            if(apiResponse.response) {
-                return require('actions/actionsLoader').boardButtonsActions.endTurn();
-            }          
-        });    
-            
+            return require('actions/actionsLoader').genericActions.endTurn();
         },
         sellActions() {
-            swal({
-            title: "Are you sure you want to sell action for coins?",
-            text: "You will sell your action for 5 coins!",
-            type: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#DD6B55",
-            confirmButtonText: "Sell action",
-            closeOnConfirm: false
-        },
-        function() {
-            var apiResponse = api.sellActions();
-            if(apiResponse.response) {
-                require('actions/actionsLoader').alertsActions.sellSuccessfulAlert();
-                return require('actions/actionsLoader').boardButtonsActions.sellActions();
-            } else {
-                return require('actions/actionsLoader').alertsActions.actionsAlert();
-                
-            }          
-        });    
-           
+            return require('actions/actionsLoader').tradesActions.sellActions();
         },
         buyActions() {
             swal({
