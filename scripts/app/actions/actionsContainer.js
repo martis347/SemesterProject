@@ -1,4 +1,4 @@
-define(['api/api'], function (api) {
+define(['api/api', 'sweetAlert'], function (api, swal) {
     var action = {
         take(card) {
             if (card.type === "building") {
@@ -62,10 +62,65 @@ define(['api/api'], function (api) {
             return require('actions/actionsLoader').workerActions.addCardToHand(card);
         },
         endTurn() {
+            swal({
+            title: "Are you sure you want to end turn?",
+            text: "You will end your turn!",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#DD6B55",
+            confirmButtonText: "End turn",
+            closeOnConfirm: true
+        },
+        function() {
             var apiResponse = api.endTurn();
             if(apiResponse.response) {
                 return require('actions/actionsLoader').boardButtonsActions.endTurn();
-            }
+            }          
+        });    
+            
+        },
+        sellActions() {
+            swal({
+            title: "Are you sure you want to sell action for coins?",
+            text: "You will sell your action for 5 coins!",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#DD6B55",
+            confirmButtonText: "Sell action",
+            closeOnConfirm: false
+        },
+        function() {
+            var apiResponse = api.sellActions();
+            if(apiResponse.response) {
+                require('actions/actionsLoader').alertsActions.sellSuccessfulAlert();
+                return require('actions/actionsLoader').boardButtonsActions.sellActions();
+            } else {
+                return require('actions/actionsLoader').alertsActions.actionsAlert();
+                
+            }          
+        });    
+           
+        },
+        buyActions() {
+            swal({
+            title: "Are you sure you want to buy actions?",
+            text: "You will buy one action for 10 coins!",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#DD6B55",
+            confirmButtonText: "Buy action",
+            closeOnConfirm: false
+        },
+        function() {
+            var apiResponse = api.buyActions();
+            if(apiResponse.response) {
+                require('actions/actionsLoader').alertsActions.buySuccessfulAlert();
+                return require('actions/actionsLoader').boardButtonsActions.buyActions();
+            } else {
+                return require('actions/actionsLoader').alertsActions.coinsAlert();
+            }         
+        });    
+           
         }
     }
 

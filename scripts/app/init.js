@@ -52,10 +52,23 @@ function(PIXI, gameContainer, elements, actions, api, boardButton) {
             gameContainer.stage.addChild(action);
             
             var endTurnButton = new PIXI.Sprite;
-            endTurnButton = boardButton.createIcon("exitB", actions.endTurn);
+            endTurnButton = boardButton.createIcon("End_Turn", actions.endTurn);
             endTurnButton.x = 50;
             endTurnButton.y = 50;
             gameContainer.stage.addChild(endTurnButton);
+            
+            var buyActionsButton = new PIXI.Sprite;
+            buyActionsButton = boardButton.createIcon("Buy", actions.buyActions);
+            buyActionsButton.x = 50;
+            buyActionsButton.y = 200;
+            gameContainer.stage.addChild(buyActionsButton);
+            
+            var sellActionsButton = new PIXI.Sprite;
+            sellActionsButton = boardButton.createIcon("Sell", actions.sellActions);
+            sellActionsButton.x = 50;
+            sellActionsButton.y = 350;
+            gameContainer.stage.addChild(sellActionsButton);
+                     
             
         }
     }
