@@ -26,11 +26,41 @@ define(['pixi', 'gameContainer', 'actions/actionsContainer', 'jquery', 'sweetAle
      function buySuccessfulAlert() {
         swal("Bought!", "Action bought.", "success");
     }
+    
+    function buildingsHandAlert() {
+        swal({
+            title: "Player buildings hand is full!",
+            text: 'Start building something',
+            type: "error",
+            confirmButtonText: "Ok"
+        });
+    }
+    
+    function workersHandAlert() {
+        swal({
+            title: "Player workers hand is full!",
+            text: 'Start assigning workers to buildings',
+            type: "error",
+            confirmButtonText: "Ok"
+        });
+    }
+    
+    function buildingsQueueFullAlert() {
+        swal({
+            title: "Player buildings queue is full!",
+            text: 'Finish buidling started buildings',
+            type: "error",
+            confirmButtonText: "Ok"
+        });
+    }
 
     return {
         coinsAlert,
         actionsAlert,
         sellSuccessfulAlert,
-        buySuccessfulAlert
+        buySuccessfulAlert,
+        buildingsHandAlert,
+        workersHandAlert,
+        buildingsQueueFullAlert
     };
 });
