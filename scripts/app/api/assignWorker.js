@@ -6,7 +6,7 @@ define(['jquery', 'gameContainer'], function($, gameContainer){
             type: "POST",
             url: gameContainer.apiUri + "api/game/worker/assign",
             success: function (response) {
-                result = response
+                result = response;
             },
             async: false,
             data: {GameGuid: gameContainer.userData.gameGuid, PlayerGuid: gameContainer.userData.playerGuid, BuildingId: target, WorkerId: card.card.id}
@@ -14,6 +14,7 @@ define(['jquery', 'gameContainer'], function($, gameContainer){
 
         return {
             success: result.Success,
+            enoughActions: result.EnoughActions,
             buildingCompleted: result.BuildingCompleted
         }
     }
