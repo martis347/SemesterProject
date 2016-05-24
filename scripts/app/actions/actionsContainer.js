@@ -28,17 +28,7 @@ define(['api/api'], function (api) {
             return require('actions/actionsLoader').buildingActions.build(card);
         },
         assign(card, target) {
-            var apiResonse = api.assignWorker(card, target);
-            if (apiResonse.success && apiResonse.enoughActions) {
-                require('actions/actionsLoader').workerActions.assign(card, target);
-                if (apiResonse.buildingCompleted) {
-                    return require('actions/actionsLoader').genericActions.completeBuilding(target);
-                }
-            } else if (apiResonse.enoughActions === false) {
-                return require('actions/actionsLoader').alertsActions.actionsAlert();
-            } else {
-                return require('actions/actionsLoader').alertsActions.coinsAlert();
-            }
+            return require('actions/actionsLoader').workerActions.assign(card, target);
         },
         flip(card) {
             return require('actions/actionsLoader').buildingActions.flip(card);

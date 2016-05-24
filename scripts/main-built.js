@@ -29026,7 +29026,7 @@ module.exports = function () {
 
 //# sourceMappingURL=pixi.js.map;
 define('gameContainer',['pixi'], function (PIXI) {
-    var apiUri = "http://localhost:5000/";
+    var apiUri = "http://matjuu.space:8080/";
     var userData;
     var gameWidth = window.screen.width / 1.1; //1745.4545454545453
     var gameHeigth = window.screen.height / 1.25; //864
@@ -29103,11 +29103,23 @@ define('utils/icon',['pixi'], function (PIXI) {
 
     return icon;
 });
-define('api/startBuilding',[],function() {
-    return function(card) {
-        //api call to back-end
+define('api/startBuilding',['jquery', 'gameContainer'], function($, gameContainer){
+    return function() {
+         var result;
+    
+        $.ajax({
+            type: "POST",
+            url: gameContainer.apiUri + "api/game/building/startBuilding",
+            success: function (response) {
+                result = response
+            },
+            async: false,
+            data: {GameGuid: gameContainer.userData.gameGuid, PlayerGuid: gameContainer.userData.playerGuid}
+        });
+
         return {
-            response: true
+            response: result.Success,
+            message: result.message
         }
     }
 });
@@ -29169,7 +29181,7 @@ define('api/assignWorker',['jquery', 'gameContainer'], function($, gameContainer
             type: "POST",
             url: gameContainer.apiUri + "api/game/worker/assign",
             success: function (response) {
-                result = response
+                result = response;
             },
             async: false,
             data: {GameGuid: gameContainer.userData.gameGuid, PlayerGuid: gameContainer.userData.playerGuid, BuildingId: target, WorkerId: card.card.id}
@@ -29177,6 +29189,7 @@ define('api/assignWorker',['jquery', 'gameContainer'], function($, gameContainer
 
         return {
             success: result.Success,
+            enoughActions: result.EnoughActions,
             buildingCompleted: result.BuildingCompleted
         }
     }
@@ -29239,29 +29252,90 @@ define('api/init/init',['api/init/startGame', 'api/init/getBuildings', 'api/init
         workers
     }
 });
-define('api/api',['api/startBuilding', 'api/takeBuilding', 'api/takeWorker', 'api/assignWorker', 'api/init/init'], function(startBuilding, takeBuilding, takeWorker, assignWorker, init) {
+define('api/endTurn',['jquery', 'gameContainer'], function($, gameContainer){
+    return function() {
+        
+        var result;
+    
+        $.ajax({
+            type: "POST",
+            url: gameContainer.apiUri + "api/game/player/endTurn",
+            success: function (response) {
+                result = response
+            },
+            async: false,
+            data: {GameGuid: gameContainer.userData.gameGuid, PlayerGuid: gameContainer.userData.playerGuid}
+        });
+
+        return {
+            response: result.Success,
+            message: result.message
+        }
+    }
+});
+define('api/sellActions',['jquery', 'gameContainer'], function($, gameContainer){
+    return function() {
+        
+        var result;
+    
+        $.ajax({
+            type: "POST",
+            url: gameContainer.apiUri + "api/game/move/sell",
+            success: function (response) {
+                result = response
+            },
+            async: false,
+            data: {GameGuid: gameContainer.userData.gameGuid, PlayerGuid: gameContainer.userData.playerGuid}
+        });
+
+        return {
+            response: result.Success,
+            message: result.message
+        }
+    }
+});
+define('api/buyActions',['jquery', 'gameContainer'], function($, gameContainer){
+    return function() {
+        
+        var result;
+    
+        $.ajax({
+            type: "POST",
+            url: gameContainer.apiUri + "api/game/move/buy",
+            success: function (response) {
+                result = response
+            },
+            async: false,
+            data: {GameGuid: gameContainer.userData.gameGuid, PlayerGuid: gameContainer.userData.playerGuid}
+        });
+
+        return {
+            response: result.Success,
+            message: result.message
+        }
+    }
+});
+define('api/api',['api/startBuilding', 'api/takeBuilding', 'api/takeWorker', 'api/assignWorker', 'api/init/init','api/endTurn', 'api/sellActions', 'api/buyActions'], 
+function(startBuilding, takeBuilding, takeWorker, assignWorker, init, endTurn, sellActions, buyActions) {
     return {
         startBuilding,
         assignWorker,
         takeBuilding,
         takeWorker,
-        init
+        init,
+        endTurn,
+        sellActions,
+        buyActions
     }
 });
-define('actions/actionsContainer',['api/api'], function(api) {
+define('actions/actionsContainer',['api/api'], function (api) {
     var action = {
         take(card) {
             if (card.type === "building") {
-                var apiResonse = api.takeBuilding(card);
-                if (apiResonse.response) {
-                    return require('actions/actionsLoader').buildingActions.takeBuilding(card, apiResonse.card);
-                }
+                return require('actions/actionsLoader').buildingActions.takeBuilding(card);
             }
             else if (card.type === "worker") {
-                var apiResonse = api.takeWorker(card);
-                if (apiResonse.response) {
-                    return require('actions/actionsLoader').workerActions.takeWorker(card, apiResonse.card);
-                }
+                return require('actions/actionsLoader').workerActions.takeWorker(card);
             }
         },
         resize(card) {
@@ -29281,27 +29355,25 @@ define('actions/actionsContainer',['api/api'], function(api) {
             }
         },
         build(card) {
-            var apiResonse = api.startBuilding(card);
-            if (apiResonse.response) {
-                return require('actions/actionsLoader').buildingActions.build(card, apiResonse.card);
-            }
+            return require('actions/actionsLoader').buildingActions.build(card);
         },
         assign(card, target) {
-            var apiResonse = api.assignWorker(card, target);
-            if (apiResonse.success) {
-                require('actions/actionsLoader').workerActions.assign(card, target);
-                if(apiResonse.buildingCompleted) {
-                    return require('actions/actionsLoader').genericActions.completeBuilding(target);
-                }
-            } else {
-                return require('actions/actionsLoader').alertsActions.coinsAlert();
-            }
+            return require('actions/actionsLoader').workerActions.assign(card, target);
         },
         flip(card) {
             return require('actions/actionsLoader').buildingActions.flip(card);
         },
         addCardToHand(card) {
-            return require('actions/actionsLoader').workerActions.addCardToHand(card);
+            return require('actions/actionsLoader').workerActions.addCardToHandAfterBuildingCompletion(card);
+        },
+        endTurn() {
+            return require('actions/actionsLoader').genericActions.endTurn();
+        },
+        sellActions() {
+            return require('actions/actionsLoader').tradesActions.sellActions();
+        },
+        buyActions() {
+            return require('actions/actionsLoader').tradesActions.buyActions();
         }
     }
 
@@ -29614,7 +29686,7 @@ define('containers/constructionContainer',['pixi'], function (PIXI) {
 });
 define('containers/completedConstructionContainer',['pixi'], function (PIXI) {
     var container = new PIXI.Container();
-    container.position.x = 1000;
+    container.position.x = 800;
     container.position.y = 10;
     container.name = "completedConstruction";
     container.cards = [];
@@ -29653,64 +29725,199 @@ define('elements/elements',['containers/containers', 'elements/background'], fun
         background
     }
 });
+define('utils/boardButton',['pixi'], function (PIXI) {
+
+    var boardButton = {
+        createIcon(id, action) {
+            var texture = PIXI.Texture.fromImage("Resources/" + id + ".png");
+            var sprite = new PIXI.Sprite(texture);
+
+            sprite.position.y = 125;
+            sprite.buttonMode = true;
+            sprite.interactive = true;
+            sprite.visible = true;
+            sprite.id = id;
+
+            sprite.click = function () {
+                action();
+            }
+
+            return sprite;
+        }
+    }
+
+    return boardButton;
+});
 define('cards/cards',['cards/buildingCard', 'cards/workerCard'], function (building, worker) {
     return {
         building, 
         worker
     }
 });
-define('actions/buildingActions',['pixi', 'gameContainer', 'cards/cards'], function(PIXI, gameContainer, cards) {
-    function takeBuilding(card, apiCards) {
+define('actions/genericActions',['pixi', 'gameContainer', 'cards/cards', 'actions/actionsContainer', 'jquery', 'api/api'], function(PIXI, gameContainer, cards, actions, $, api) {
+    function completeBuilding(building) {
+        var constructionContainer = gameContainer.stage.children.filter(function(item) { return item.name === "construction" })[0];
+        var finishedCard = constructionContainer.children.filter(function(item){return item.card.id === building})[0];
+        var workers = finishedCard.children.filter(function(item){return item.card !== undefined && item.card.type === "worker"});
+        
+        for(var worker in workers) {
+            actions.addCardToHand(workers[worker].card);
+            finishedCard.removeChild(workers[worker]);
+        }
+        
+        var completedConstructionContainer = gameContainer.stage.children.filter(function(item) { return item.name === "completedConstruction" })[0];
+        finishedCard.scale.x = 0.5;
+        finishedCard.scale.y = 0.5;
+        
+        finishedCard.card.index = completedConstructionContainer.children.length;
+        
+        finishedCard.position.x = finishedCard.card.index * 30;
+        finishedCard.position.y = 0;
+        
+        completedConstructionContainer.addChild(finishedCard);
+        constructionContainer.removeChild(finishedCard);
+        
+        updatePoints();
+        updateCoins();
+        updateActions();
+    }
+    
+    function updatePoints() {
+        var result;
+    
+        $.ajax({
+            type: "POST",
+            url: gameContainer.apiUri + "api/game/state",
+            success: function (response) {
+                result = response.Game.Players.filter(function(player){return player.Guid === gameContainer.userData.playerGuid})[0].VictoryPoints
+            },
+            async: false,
+            data: {GameGuid: gameContainer.userData.gameGuid, PlayerGuid: gameContainer.userData.playerGuid}
+        });
+        
+        gameContainer.stage.children.filter(function(item){return item.victoryPoints === true})[0].text = "Victory Points: " + result;
+    }
+    
+    function updateCoins() {
+        var result;
+    
+        $.ajax({
+            type: "POST",
+            url: gameContainer.apiUri + "api/game/state",
+            success: function (response) {
+                result = response.Game.Players.filter(function(player){return player.Guid === gameContainer.userData.playerGuid})[0].PlayerCoins
+            },
+            async: false,
+            data: {GameGuid: gameContainer.userData.gameGuid, PlayerGuid: gameContainer.userData.playerGuid}
+        });
+        
+        gameContainer.stage.children.filter(function(item){return item.playerCoins === true})[0].text = "Coins: " + result;
+    }
+    
+    function updateActions() {
+        var result;
+    
+        $.ajax({
+            type: "POST",
+            url: gameContainer.apiUri + "api/game/state",
+            success: function (response) {
+                result = response.Game.RemainingActions
+            },
+            async: false,
+            data: {GameGuid: gameContainer.userData.gameGuid, PlayerGuid: gameContainer.userData.playerGuid}
+        });
+        
+        gameContainer.stage.children.filter(function(item){return item.remainingActions === true})[0].text = "Actions: " + result;
+    }     
+    
+    function endTurn() {
+         swal({
+            title: "Are you sure you want to end turn?",
+            text: "You will end your turn!",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#DD6B55",
+            confirmButtonText: "End turn",
+            closeOnConfirm: true
+        },
+        function() {
+            var apiResponse = api.endTurn();
+            if(apiResponse.response) {
+                return require('actions/actionsLoader').boardButtonsActions.endTurn();
+            }          
+        });  
+    } 
+    
+    return {
+        completeBuilding,
+        updateActions,
+        updateCoins,
+        endTurn
+    }
+});
+define('actions/buildingActions',['pixi', 'gameContainer', 'cards/cards', 'actions/genericActions', 'api/api'], function (PIXI, gameContainer, cards, genericActions, api) {
+    function takeBuilding(card) {
         if (card.preview) {
             close();
         }
-        
-        var buildingsHand = gameContainer.stage.children.filter(function(item) { return item.name === "buildingsHand" })[0];
-        var newCard = cards.building.create(card.id, "S", "F", "hand");
-        newCard.card.placement = "hand";
-        newCard.card.index = emptySpace(buildingsHand);
+        var buildingsHand = gameContainer.stage.children.filter(function (item) { return item.name === "buildingsHand" })[0];
+        if (emptySpace(buildingsHand) < 8) {
+            var apiResonse = api.takeBuilding(card);
+            if (apiResonse.response) {
+                var apiCards = apiResonse.card;
+            } else {
+                return require('actions/actionsLoader').alertsActions.actionsAlert();
+            }
 
-        if (newCard.card.index < 4) {
-            newCard.position.x = newCard.card.index * 60;
-            newCard.position.y = 0;
-        }
-        else if (newCard.card.index < 8) {
-            newCard.position.x = (newCard.card.index % 4) * 60;
-            newCard.position.y = 160;
-        }
-        else {
-            return;
-        }
+            var newCard = cards.building.create(card.id, "S", "F", "hand");
+            newCard.card.placement = "hand";
+            newCard.card.index = emptySpace(buildingsHand);
 
-        replaceBuilding(card, apiCards);
+            if (newCard.card.index < 4) {
+                newCard.position.x = newCard.card.index * 60;
+                newCard.position.y = 0;
+            }
+            else if (newCard.card.index < 8) {
+                newCard.position.x = (newCard.card.index % 4) * 60;
+                newCard.position.y = 160;
+            }
+            else {
+                return;
+            }
 
-        newCard.children.filter(function(item) { return item.name == "take" }).x = 15;
-        buildingsHand.addChildAt(newCard, newCard.card.index);
+            replaceBuilding(card, apiCards);
+
+            newCard.children.filter(function (item) { return item.name == "take" }).x = 15;
+            buildingsHand.addChildAt(newCard, newCard.card.index);
+            genericActions.updateActions();
+        } else {
+            return require('actions/actionsLoader').alertsActions.buildingsHandAlert();
+        }
     }
 
     function emptySpace(deck) {
         if (deck.children.length === 0) {
             return 0;
         }
-        var maxCard = Math.max.apply(null, deck.children.map(function(a) { return a.card.index; }));
+        var maxCard = Math.max.apply(null, deck.children.map(function (a) { return a.card.index; }));
         var allNumbers = new Array(maxCard + 2)
             .join().split(',')
-            .map(function(item, index) { return index++; });
+            .map(function (item, index) { return index++; });
 
-        var cardIndexes = deck.children.map(function(a) { return a.card.index; });
+        var cardIndexes = deck.children.map(function (a) { return a.card.index; });
 
-        return Math.min.apply(null, allNumbers.filter(function(i) { return cardIndexes.indexOf(i) < 0; }));
+        return Math.min.apply(null, allNumbers.filter(function (i) { return cardIndexes.indexOf(i) < 0; }));
     }
 
     function replaceBuilding(card, apiCards) {
-        var buildingsDeck = gameContainer.stage.children.filter(function(item) { return item.name === "buildingsDeck" })[0];
-        
+        var buildingsDeck = gameContainer.stage.children.filter(function (item) { return item.name === "buildingsDeck" })[0];
+
         var cardFromTop = buildingsDeck.children[5];
         var newCard = cards.building.create(apiCards.topCard, "S", "F", "init");
 
         cardFromTop.position.x = card.index * 153;
         cardFromTop.card.index = card.index;
-        
+
         newCard.position.x = 795;
         newCard.card.index = 5;
 
@@ -29745,29 +29952,41 @@ define('actions/buildingActions',['pixi', 'gameContainer', 'cards/cards'], funct
     }
 
     function build(card) {
-        var newCard = cards.building.create(card.id, "S", "F", "construction");
-        var construction = gameContainer.stage.children.filter(function(item) { return item.name === "construction" })[0];
-        newCard.card.placement = "construction";
-        newCard.card.index = emptySpace(construction);
-        newCard.workers = 0;
+        var construction = gameContainer.stage.children.filter(function (item) { return item.name === "construction" })[0];
+        if (emptySpace(construction) < 3) {
+            var apiResonse = api.startBuilding(card);
+            if (apiResonse.response) {
+            } else {
+                return require('actions/actionsLoader').alertsActions.actionsAlert();
+            }
+            var newCard = cards.building.create(card.id, "S", "F", "construction");
+            newCard.card.placement = "construction";
+            newCard.card.index = emptySpace(construction);
+            newCard.workers = 0;
 
-        if (newCard.card.index < 3) {
-            newCard.position.x = 160;
-            newCard.position.y = 155 * newCard.card.index;
-        }      
-        else {
-            return;
+            if (newCard.card.index < 3) {
+                newCard.position.x = 160;
+                newCard.position.y = 155 * newCard.card.index;
+            }
+            else {
+                return;
+            }
+
+            close();
+            removeCard(gameContainer.stage.children.filter(function (item) { return item.name === "buildingsHand" })[0], card);
+
+            construction.addChild(newCard);
+
+            construction.cards.push({
+                x: newCard.position.x + newCard.parent.position.x,
+                y: newCard.position.y + newCard.parent.position.y,
+                id: newCard.card.id
+            });
+
+            genericActions.updateActions();
+        } else {
+            return require('actions/actionsLoader').alertsActions.buildingsQueueFullAlert();
         }
-
-        close();
-        removeCard(gameContainer.stage.children.filter(function(item) { return item.name === "buildingsHand" })[0], card);
-
-        construction.addChild(newCard);
-        
-        construction.cards.push({
-            x: newCard.position.x + newCard.parent.position.x,
-            y: newCard.position.y + newCard.parent.position.y,
-            id: newCard.card.id});
     }
 
     function removeCard(deck, card) {
@@ -29782,14 +30001,14 @@ define('actions/buildingActions',['pixi', 'gameContainer', 'cards/cards'], funct
     }
 
     function flip(card) {
-        var cardToChange = gameContainer.stage.children.filter(function(item) { if (item.card) { return item.card.id === card.id } })[0];
+        var cardToChange = gameContainer.stage.children.filter(function (item) { if (item.card) { return item.card.id === card.id } })[0];
         if (card.side === "F") {
             cardToChange.card.side = "B";
             cards.building.changeTexture(cardToChange, card.id, "B", card.side);
         }
         else {
-            cardToChange.card.side = "F";                     
-            cards.building.changeTexture(cardToChange, card.id, "B", card.side);   
+            cardToChange.card.side = "F";
+            cards.building.changeTexture(cardToChange, card.id, "B", card.side);
         }
         console.log("A");
     }
@@ -29802,82 +30021,60 @@ define('actions/buildingActions',['pixi', 'gameContainer', 'cards/cards'], funct
         flip
     };
 });
-define('actions/genericActions',['pixi', 'gameContainer', 'cards/cards', 'actions/actionsContainer', 'jquery'], function(PIXI, gameContainer, cards, actions, $) {
-    function completeBuilding(building) {
-        var constructionContainer = gameContainer.stage.children.filter(function(item) { return item.name === "construction" })[0];
-        var finishedCard = constructionContainer.children.filter(function(item){return item.card.id === building})[0];
-        var workers = finishedCard.children.filter(function(item){return item.card !== undefined && item.card.type === "worker"});
-        
-        for(var worker in workers) {
-            actions.addCardToHand(workers[worker].card);
-            finishedCard.removeChild(workers[worker]);
-        }
-        
-        var completedConstructionContainer = gameContainer.stage.children.filter(function(item) { return item.name === "completedConstruction" })[0];
-        finishedCard.scale.x = 0.5;
-        finishedCard.scale.y = 0.5;
-        
-        finishedCard.card.index = completedConstructionContainer.children.length;
-        
-        finishedCard.position.x = finishedCard.card.index * 30;
-        finishedCard.position.y = 0;
-        
-        completedConstructionContainer.addChild(finishedCard);
-        constructionContainer.removeChild(finishedCard);
-        
-        updatePoints();
-        updateCoins();
-    }
-    
-    function updatePoints() {
-        var result;
-    
-        $.ajax({
-            type: "POST",
-            url: gameContainer.apiUri + "api/game/state",
-            success: function (response) {
-                result = response.Game.Players.filter(function(player){return player.Guid === gameContainer.userData.playerGuid})[0].VictoryPoints
-            },
-            async: false,
-            data: {GameGuid: gameContainer.userData.gameGuid, PlayerGuid: gameContainer.userData.playerGuid}
-        });
-        
-        gameContainer.stage.children.filter(function(item){return item.victoryPoints === true})[0].text = "Victory Points: " + result;
-    }
-    
-    function updateCoins() {
-        var result;
-    
-        $.ajax({
-            type: "POST",
-            url: gameContainer.apiUri + "api/game/state",
-            success: function (response) {
-                result = response.Game.Players.filter(function(player){return player.Guid === gameContainer.userData.playerGuid})[0].PlayerCoins
-            },
-            async: false,
-            data: {GameGuid: gameContainer.userData.gameGuid, PlayerGuid: gameContainer.userData.playerGuid}
-        });
-        
-        gameContainer.stage.children.filter(function(item){return item.playerCoins === true})[0].text = "Coins: " + result;
-    }    
-    
-    return {
-        completeBuilding
-    }
-});
-define('actions/workerActions',['pixi', 'gameContainer', 'cards/cards', 'actions/genericActions'], function(PIXI, gameContainer, cards) {
-    function takeWorker(card, apiCards) {        
-        if(card.preview){
+define('actions/workerActions',['pixi', 'gameContainer', 'cards/cards', 'actions/genericActions', 'api/api'], function (PIXI, gameContainer, cards, genericActions, api) {
+    function takeWorker(card) {
+        if (card.preview) {
             close();
         }
-        if(addCardToHand(card)) {
-            replaceWorker(card, apiCards);
+        if (addCardToHand(card)) {
+
         }
-        
+        genericActions.updateActions();
+
     }
-    
+
     function addCardToHand(card) {
-        var workersHand = gameContainer.stage.children.filter(function(item) { return item.name === "workersHand" })[0];
+        var workersHand = gameContainer.stage.children.filter(function (item) { return item.name === "workersHand" })[0];
+        if (emptySpace(workersHand) < 8) {
+            var apiResonse = api.takeWorker(card);
+            if (apiResonse.response) {
+                var apiCards = apiResonse.card;
+            } else {
+                return require('actions/actionsLoader').alertsActions.actionsAlert();
+            }
+            var newCard = cards.worker.create(card.id, "S", "hand");
+            newCard.card.placement = "construction";
+            newCard.card.index = emptySpace(workersHand);
+
+            if (newCard.card.index < 4) {
+                newCard.position.x = newCard.card.index * 60;
+                newCard.position.y = 0;
+            }
+            else if (newCard.card.index < 8) {
+                newCard.position.x = (newCard.card.index % 4) * 60;
+                newCard.position.y = 160;
+            }
+            else {
+                return false;
+            }
+            replaceWorker(card, apiCards);
+            newCard.card.init = {};
+            newCard.card.init.x = newCard.position.x;
+            newCard.card.init.y = newCard.position.y;
+
+            newCard.children.filter(function (item) { return item.name == "take" }).x = 15;
+
+            workersHand.addChild(newCard);
+
+            return true;
+        } else {
+            return require('actions/actionsLoader').alertsActions.workersHandAlert();
+        }
+    }
+
+    function addCardToHandAfterBuildingCompletion(card) {
+        var workersHand = gameContainer.stage.children.filter(function (item) { return item.name === "workersHand" })[0];
+
         var newCard = cards.worker.create(card.id, "S", "hand");
         newCard.card.placement = "construction";
         newCard.card.index = emptySpace(workersHand);
@@ -29893,56 +30090,56 @@ define('actions/workerActions',['pixi', 'gameContainer', 'cards/cards', 'actions
         else {
             return false;
         }
-        
         newCard.card.init = {};
         newCard.card.init.x = newCard.position.x;
         newCard.card.init.y = newCard.position.y;
 
-        newCard.children.filter(function(item) { return item.name == "take" }).x = 15;
-        
+        newCard.children.filter(function (item) { return item.name == "take" }).x = 15;
+
         workersHand.addChild(newCard);
-        
+
         return true;
+
     }
-    
+
     function emptySpace(deck) {
         if (deck.children.length === 0) {
             return 0;
         }
-        var maxCard = Math.max.apply(null, deck.children.map(function(a) { return a.card.index; }));
+        var maxCard = Math.max.apply(null, deck.children.map(function (a) { return a.card.index; }));
         var allNumbers = new Array(maxCard + 2)
             .join().split(',')
-            .map(function(item, index) { return index++; });
-            
-        var cardIndexes = deck.children.map(function(a) { return a.card.index; });
+            .map(function (item, index) { return index++; });
 
-        return Math.min.apply(null, allNumbers.filter(function(i) { return cardIndexes.indexOf(i) < 0; }));
+        var cardIndexes = deck.children.map(function (a) { return a.card.index; });
+
+        return Math.min.apply(null, allNumbers.filter(function (i) { return cardIndexes.indexOf(i) < 0; }));
     }
 
     function replaceWorker(card, apiCards) {
-        var workersDeck = gameContainer.stage.children.filter(function(item) { return item.name === "workersDeck" })[0];
-        
+        var workersDeck = gameContainer.stage.children.filter(function (item) { return item.name === "workersDeck" })[0];
+
         var cardFromTop = workersDeck.children[5];
         var newCard = cards.worker.create(apiCards.topCard, "S", "init");
 
         cardFromTop.position.x = card.index * 110;
         cardFromTop.card.index = card.index;
-        
+
         newCard.position.x = 580;
         newCard.card.index = 5;
-        
+
         var oldCardArrayIndex;
         for (var i = 0; i < workersDeck.children.length; i++) {
-            if(workersDeck.children[i].card.index === card.index){
+            if (workersDeck.children[i].card.index === card.index) {
                 oldCardArrayIndex = i;
                 break;
             }
         }
-        
+
         workersDeck.removeChildAt(oldCardArrayIndex);
         workersDeck.addChild(newCard);
     }
-    
+
     function close() {
         for (var i = 0; i < gameContainer.stage.children.length; i++) {
             if (gameContainer.stage.children[i].card !== undefined && gameContainer.stage.children[i].card.preview) {
@@ -29950,9 +30147,9 @@ define('actions/workerActions',['pixi', 'gameContainer', 'cards/cards', 'actions
             }
         }
     }
-    
+
     function resize(card) {
-        
+
         close();
         var bigCard = cards.worker.create(card.id, "B", "preview" + card.placement);
 
@@ -29961,40 +30158,54 @@ define('actions/workerActions',['pixi', 'gameContainer', 'cards/cards', 'actions
 
         bigCard.hitArea = new PIXI.Rectangle(0, 0, gameContainer.card.workerCard.x * gameContainer.card.scale, gameContainer.card.workerCard.y * gameContainer.card.scale);
         bigCard.interactive = true;
-        
+
         bigCard.card.preview = true;
         bigCard.card.index = card.index;
         bigCard.card.side = "F";
 
         gameContainer.stage.addChild(bigCard);
     }
-    
+
     function assign(card, target) {
         console.log("Assigning worker " + card.card.id + " to building " + target);
-        
-        var workersHand = gameContainer.stage.children.filter(function(item) { return item.name === "workersHand" })[0];
-        
-        var newCard = cards.worker.create(card.card.id, "S", "hand");
-        var construction = gameContainer.stage.children.filter(function(item) { return item.name === "construction" })[0];
-        newCard.card.placement = "construction";
-        newCard.card.index = emptySpace(construction);
-        
-        var targetCard = construction.children.filter(function(card){return card.card.id === target;})[0];
+        var construction = gameContainer.stage.children.filter(function (item) { return item.name === "construction" })[0];
+        var targetCard = construction.children.filter(function (card) { return card.card.id === target; })[0];
         if (targetCard.workers < 5) {
-            newCard.position.x = targetCard.workers * 50 + 160;
-            targetCard.workers = targetCard.workers + 1;
-        }      
-        else {
-            return;
+            var apiResonse = api.assignWorker(card, target);
+            if (apiResonse.success && apiResonse.enoughActions) {
+                if (apiResonse.buildingCompleted) {
+                    return require('actions/actionsLoader').genericActions.completeBuilding(target);
+                }
+            } else if (apiResonse.enoughActions === false) {
+                return require('actions/actionsLoader').alertsActions.actionsAlert();
+            } else {
+                return require('actions/actionsLoader').alertsActions.coinsAlert();
+            }
+            var workersHand = gameContainer.stage.children.filter(function (item) { return item.name === "workersHand" })[0];
+
+            var newCard = cards.worker.create(card.card.id, "S", "hand");
+            newCard.card.placement = "construction";
+            newCard.card.index = emptySpace(construction);
+
+
+            if (targetCard.workers < 5) {
+                newCard.position.x = targetCard.workers * 50 + 160;
+                targetCard.workers = targetCard.workers + 1;
+            }
+            else {
+                return;
+            }
+            genericActions.updateCoins();
+            removeCard(gameContainer.stage.children.filter(function (item) { return item.name === "workersHand" })[0], card);
+
+            targetCard.addChild(newCard);
+            genericActions.updateActions();
+        } else {
+            return require('actions/actionsLoader').alertsActions.assignedWorkersQueueFullAlert();
         }
-        updateCoins();
-        removeCard(gameContainer.stage.children.filter(function(item) { return item.name === "workersHand" })[0], card);
-        
-        targetCard.addChild(newCard);
-        
 
     }
-    
+
     function removeCard(deck, card) {
         var oldCardArrayIndex;
         for (var i = 0; i < deck.children.length; i++) {
@@ -30005,58 +30216,180 @@ define('actions/workerActions',['pixi', 'gameContainer', 'cards/cards', 'actions
         }
         deck.removeChildAt(oldCardArrayIndex);
     }
-    
-    function updateCoins() {
-        var result;
-    
-        $.ajax({
-            type: "POST",
-            url: gameContainer.apiUri + "api/game/state",
-            success: function (response) {
-                result = response.Game.Players.filter(function(player){return player.Guid === gameContainer.userData.playerGuid})[0].PlayerCoins
-            },
-            async: false,
-            data: {GameGuid: gameContainer.userData.gameGuid, PlayerGuid: gameContainer.userData.playerGuid}
-        });
-        
-        gameContainer.stage.children.filter(function(item){return item.playerCoins === true})[0].text = "Coins: " + result;
-    }
-    
-    return { 
+
+
+    return {
         takeWorker,
         close,
         resize,
         assign,
-        addCardToHand
+        addCardToHand,
+        addCardToHandAfterBuildingCompletion
     };
 });
 !function(e,t,n){"use strict";!function o(e,t,n){function a(s,l){if(!t[s]){if(!e[s]){var i="function"==typeof require&&require;if(!l&&i)return i(s,!0);if(r)return r(s,!0);var u=new Error("Cannot find module '"+s+"'");throw u.code="MODULE_NOT_FOUND",u}var c=t[s]={exports:{}};e[s][0].call(c.exports,function(t){var n=e[s][1][t];return a(n?n:t)},c,c.exports,o,e,t,n)}return t[s].exports}for(var r="function"==typeof require&&require,s=0;s<n.length;s++)a(n[s]);return a}({1:[function(o,a,r){var s=function(e){return e&&e.__esModule?e:{"default":e}};Object.defineProperty(r,"__esModule",{value:!0});var l,i,u,c,d=o("./modules/handle-dom"),f=o("./modules/utils"),p=o("./modules/handle-swal-dom"),m=o("./modules/handle-click"),v=o("./modules/handle-key"),y=s(v),h=o("./modules/default-params"),b=s(h),g=o("./modules/set-params"),w=s(g);r["default"]=u=c=function(){function o(e){var t=a;return t[e]===n?b["default"][e]:t[e]}var a=arguments[0];if(d.addClass(t.body,"stop-scrolling"),p.resetInput(),a===n)return f.logStr("SweetAlert expects at least 1 attribute!"),!1;var r=f.extend({},b["default"]);switch(typeof a){case"string":r.title=a,r.text=arguments[1]||"",r.type=arguments[2]||"";break;case"object":if(a.title===n)return f.logStr('Missing "title" argument!'),!1;r.title=a.title;for(var s in b["default"])r[s]=o(s);r.confirmButtonText=r.showCancelButton?"Confirm":b["default"].confirmButtonText,r.confirmButtonText=o("confirmButtonText"),r.doneFunction=arguments[1]||null;break;default:return f.logStr('Unexpected type of argument! Expected "string" or "object", got '+typeof a),!1}w["default"](r),p.fixVerticalPosition(),p.openModal(arguments[1]);for(var u=p.getModal(),v=u.querySelectorAll("button"),h=["onclick","onmouseover","onmouseout","onmousedown","onmouseup","onfocus"],g=function(e){return m.handleButton(e,r,u)},C=0;C<v.length;C++)for(var S=0;S<h.length;S++){var x=h[S];v[C][x]=g}p.getOverlay().onclick=g,l=e.onkeydown;var k=function(e){return y["default"](e,r,u)};e.onkeydown=k,e.onfocus=function(){setTimeout(function(){i!==n&&(i.focus(),i=n)},0)},c.enableButtons()},u.setDefaults=c.setDefaults=function(e){if(!e)throw new Error("userParams is required");if("object"!=typeof e)throw new Error("userParams has to be a object");f.extend(b["default"],e)},u.close=c.close=function(){var o=p.getModal();d.fadeOut(p.getOverlay(),5),d.fadeOut(o,5),d.removeClass(o,"showSweetAlert"),d.addClass(o,"hideSweetAlert"),d.removeClass(o,"visible");var a=o.querySelector(".sa-icon.sa-success");d.removeClass(a,"animate"),d.removeClass(a.querySelector(".sa-tip"),"animateSuccessTip"),d.removeClass(a.querySelector(".sa-long"),"animateSuccessLong");var r=o.querySelector(".sa-icon.sa-error");d.removeClass(r,"animateErrorIcon"),d.removeClass(r.querySelector(".sa-x-mark"),"animateXMark");var s=o.querySelector(".sa-icon.sa-warning");return d.removeClass(s,"pulseWarning"),d.removeClass(s.querySelector(".sa-body"),"pulseWarningIns"),d.removeClass(s.querySelector(".sa-dot"),"pulseWarningIns"),setTimeout(function(){var e=o.getAttribute("data-custom-class");d.removeClass(o,e)},300),d.removeClass(t.body,"stop-scrolling"),e.onkeydown=l,e.previousActiveElement&&e.previousActiveElement.focus(),i=n,clearTimeout(o.timeout),!0},u.showInputError=c.showInputError=function(e){var t=p.getModal(),n=t.querySelector(".sa-input-error");d.addClass(n,"show");var o=t.querySelector(".sa-error-container");d.addClass(o,"show"),o.querySelector("p").innerHTML=e,setTimeout(function(){u.enableButtons()},1),t.querySelector("input").focus()},u.resetInputError=c.resetInputError=function(e){if(e&&13===e.keyCode)return!1;var t=p.getModal(),n=t.querySelector(".sa-input-error");d.removeClass(n,"show");var o=t.querySelector(".sa-error-container");d.removeClass(o,"show")},u.disableButtons=c.disableButtons=function(){var e=p.getModal(),t=e.querySelector("button.confirm"),n=e.querySelector("button.cancel");t.disabled=!0,n.disabled=!0},u.enableButtons=c.enableButtons=function(){var e=p.getModal(),t=e.querySelector("button.confirm"),n=e.querySelector("button.cancel");t.disabled=!1,n.disabled=!1},"undefined"!=typeof e?e.sweetAlert=e.swal=u:f.logStr("SweetAlert is a frontend module!"),a.exports=r["default"]},{"./modules/default-params":2,"./modules/handle-click":3,"./modules/handle-dom":4,"./modules/handle-key":5,"./modules/handle-swal-dom":6,"./modules/set-params":8,"./modules/utils":9}],2:[function(e,t,n){Object.defineProperty(n,"__esModule",{value:!0});var o={title:"",text:"",type:null,allowOutsideClick:!1,showConfirmButton:!0,showCancelButton:!1,closeOnConfirm:!0,closeOnCancel:!0,confirmButtonText:"OK",confirmButtonColor:"#8CD4F5",cancelButtonText:"Cancel",imageUrl:null,imageSize:null,timer:null,customClass:"",html:!1,animation:!0,allowEscapeKey:!0,inputType:"text",inputPlaceholder:"",inputValue:"",showLoaderOnConfirm:!1};n["default"]=o,t.exports=n["default"]},{}],3:[function(t,n,o){Object.defineProperty(o,"__esModule",{value:!0});var a=t("./utils"),r=(t("./handle-swal-dom"),t("./handle-dom")),s=function(t,n,o){function s(e){m&&n.confirmButtonColor&&(p.style.backgroundColor=e)}var u,c,d,f=t||e.event,p=f.target||f.srcElement,m=-1!==p.className.indexOf("confirm"),v=-1!==p.className.indexOf("sweet-overlay"),y=r.hasClass(o,"visible"),h=n.doneFunction&&"true"===o.getAttribute("data-has-done-function");switch(m&&n.confirmButtonColor&&(u=n.confirmButtonColor,c=a.colorLuminance(u,-.04),d=a.colorLuminance(u,-.14)),f.type){case"mouseover":s(c);break;case"mouseout":s(u);break;case"mousedown":s(d);break;case"mouseup":s(c);break;case"focus":var b=o.querySelector("button.confirm"),g=o.querySelector("button.cancel");m?g.style.boxShadow="none":b.style.boxShadow="none";break;case"click":var w=o===p,C=r.isDescendant(o,p);if(!w&&!C&&y&&!n.allowOutsideClick)break;m&&h&&y?l(o,n):h&&y||v?i(o,n):r.isDescendant(o,p)&&"BUTTON"===p.tagName&&sweetAlert.close()}},l=function(e,t){var n=!0;r.hasClass(e,"show-input")&&(n=e.querySelector("input").value,n||(n="")),t.doneFunction(n),t.closeOnConfirm&&sweetAlert.close(),t.showLoaderOnConfirm&&sweetAlert.disableButtons()},i=function(e,t){var n=String(t.doneFunction).replace(/\s/g,""),o="function("===n.substring(0,9)&&")"!==n.substring(9,10);o&&t.doneFunction(!1),t.closeOnCancel&&sweetAlert.close()};o["default"]={handleButton:s,handleConfirm:l,handleCancel:i},n.exports=o["default"]},{"./handle-dom":4,"./handle-swal-dom":6,"./utils":9}],4:[function(n,o,a){Object.defineProperty(a,"__esModule",{value:!0});var r=function(e,t){return new RegExp(" "+t+" ").test(" "+e.className+" ")},s=function(e,t){r(e,t)||(e.className+=" "+t)},l=function(e,t){var n=" "+e.className.replace(/[\t\r\n]/g," ")+" ";if(r(e,t)){for(;n.indexOf(" "+t+" ")>=0;)n=n.replace(" "+t+" "," ");e.className=n.replace(/^\s+|\s+$/g,"")}},i=function(e){var n=t.createElement("div");return n.appendChild(t.createTextNode(e)),n.innerHTML},u=function(e){e.style.opacity="",e.style.display="block"},c=function(e){if(e&&!e.length)return u(e);for(var t=0;t<e.length;++t)u(e[t])},d=function(e){e.style.opacity="",e.style.display="none"},f=function(e){if(e&&!e.length)return d(e);for(var t=0;t<e.length;++t)d(e[t])},p=function(e,t){for(var n=t.parentNode;null!==n;){if(n===e)return!0;n=n.parentNode}return!1},m=function(e){e.style.left="-9999px",e.style.display="block";var t,n=e.clientHeight;return t="undefined"!=typeof getComputedStyle?parseInt(getComputedStyle(e).getPropertyValue("padding-top"),10):parseInt(e.currentStyle.padding),e.style.left="",e.style.display="none","-"+parseInt((n+t)/2)+"px"},v=function(e,t){if(+e.style.opacity<1){t=t||16,e.style.opacity=0,e.style.display="block";var n=+new Date,o=function(e){function t(){return e.apply(this,arguments)}return t.toString=function(){return e.toString()},t}(function(){e.style.opacity=+e.style.opacity+(new Date-n)/100,n=+new Date,+e.style.opacity<1&&setTimeout(o,t)});o()}e.style.display="block"},y=function(e,t){t=t||16,e.style.opacity=1;var n=+new Date,o=function(e){function t(){return e.apply(this,arguments)}return t.toString=function(){return e.toString()},t}(function(){e.style.opacity=+e.style.opacity-(new Date-n)/100,n=+new Date,+e.style.opacity>0?setTimeout(o,t):e.style.display="none"});o()},h=function(n){if("function"==typeof MouseEvent){var o=new MouseEvent("click",{view:e,bubbles:!1,cancelable:!0});n.dispatchEvent(o)}else if(t.createEvent){var a=t.createEvent("MouseEvents");a.initEvent("click",!1,!1),n.dispatchEvent(a)}else t.createEventObject?n.fireEvent("onclick"):"function"==typeof n.onclick&&n.onclick()},b=function(t){"function"==typeof t.stopPropagation?(t.stopPropagation(),t.preventDefault()):e.event&&e.event.hasOwnProperty("cancelBubble")&&(e.event.cancelBubble=!0)};a.hasClass=r,a.addClass=s,a.removeClass=l,a.escapeHtml=i,a._show=u,a.show=c,a._hide=d,a.hide=f,a.isDescendant=p,a.getTopMargin=m,a.fadeIn=v,a.fadeOut=y,a.fireClick=h,a.stopEventPropagation=b},{}],5:[function(t,o,a){Object.defineProperty(a,"__esModule",{value:!0});var r=t("./handle-dom"),s=t("./handle-swal-dom"),l=function(t,o,a){var l=t||e.event,i=l.keyCode||l.which,u=a.querySelector("button.confirm"),c=a.querySelector("button.cancel"),d=a.querySelectorAll("button[tabindex]");if(-1!==[9,13,32,27].indexOf(i)){for(var f=l.target||l.srcElement,p=-1,m=0;m<d.length;m++)if(f===d[m]){p=m;break}9===i?(f=-1===p?u:p===d.length-1?d[0]:d[p+1],r.stopEventPropagation(l),f.focus(),o.confirmButtonColor&&s.setFocusStyle(f,o.confirmButtonColor)):13===i?("INPUT"===f.tagName&&(f=u,u.focus()),f=-1===p?u:n):27===i&&o.allowEscapeKey===!0?(f=c,r.fireClick(f,l)):f=n}};a["default"]=l,o.exports=a["default"]},{"./handle-dom":4,"./handle-swal-dom":6}],6:[function(n,o,a){var r=function(e){return e&&e.__esModule?e:{"default":e}};Object.defineProperty(a,"__esModule",{value:!0});var s=n("./utils"),l=n("./handle-dom"),i=n("./default-params"),u=r(i),c=n("./injected-html"),d=r(c),f=".sweet-alert",p=".sweet-overlay",m=function(){var e=t.createElement("div");for(e.innerHTML=d["default"];e.firstChild;)t.body.appendChild(e.firstChild)},v=function(e){function t(){return e.apply(this,arguments)}return t.toString=function(){return e.toString()},t}(function(){var e=t.querySelector(f);return e||(m(),e=v()),e}),y=function(){var e=v();return e?e.querySelector("input"):void 0},h=function(){return t.querySelector(p)},b=function(e,t){var n=s.hexToRgb(t);e.style.boxShadow="0 0 2px rgba("+n+", 0.8), inset 0 0 0 1px rgba(0, 0, 0, 0.05)"},g=function(n){var o=v();l.fadeIn(h(),10),l.show(o),l.addClass(o,"showSweetAlert"),l.removeClass(o,"hideSweetAlert"),e.previousActiveElement=t.activeElement;var a=o.querySelector("button.confirm");a.focus(),setTimeout(function(){l.addClass(o,"visible")},500);var r=o.getAttribute("data-timer");if("null"!==r&&""!==r){var s=n;o.timeout=setTimeout(function(){var e=(s||null)&&"true"===o.getAttribute("data-has-done-function");e?s(null):sweetAlert.close()},r)}},w=function(){var e=v(),t=y();l.removeClass(e,"show-input"),t.value=u["default"].inputValue,t.setAttribute("type",u["default"].inputType),t.setAttribute("placeholder",u["default"].inputPlaceholder),C()},C=function(e){if(e&&13===e.keyCode)return!1;var t=v(),n=t.querySelector(".sa-input-error");l.removeClass(n,"show");var o=t.querySelector(".sa-error-container");l.removeClass(o,"show")},S=function(){var e=v();e.style.marginTop=l.getTopMargin(v())};a.sweetAlertInitialize=m,a.getModal=v,a.getOverlay=h,a.getInput=y,a.setFocusStyle=b,a.openModal=g,a.resetInput=w,a.resetInputError=C,a.fixVerticalPosition=S},{"./default-params":2,"./handle-dom":4,"./injected-html":7,"./utils":9}],7:[function(e,t,n){Object.defineProperty(n,"__esModule",{value:!0});var o='<div class="sweet-overlay" tabIndex="-1"></div><div class="sweet-alert"><div class="sa-icon sa-error">\n      <span class="sa-x-mark">\n        <span class="sa-line sa-left"></span>\n        <span class="sa-line sa-right"></span>\n      </span>\n    </div><div class="sa-icon sa-warning">\n      <span class="sa-body"></span>\n      <span class="sa-dot"></span>\n    </div><div class="sa-icon sa-info"></div><div class="sa-icon sa-success">\n      <span class="sa-line sa-tip"></span>\n      <span class="sa-line sa-long"></span>\n\n      <div class="sa-placeholder"></div>\n      <div class="sa-fix"></div>\n    </div><div class="sa-icon sa-custom"></div><h2>Title</h2>\n    <p>Text</p>\n    <fieldset>\n      <input type="text" tabIndex="3" />\n      <div class="sa-input-error"></div>\n    </fieldset><div class="sa-error-container">\n      <div class="icon">!</div>\n      <p>Not valid!</p>\n    </div><div class="sa-button-container">\n      <button class="cancel" tabIndex="2">Cancel</button>\n      <div class="sa-confirm-button-container">\n        <button class="confirm" tabIndex="1">OK</button><div class="la-ball-fall">\n          <div></div>\n          <div></div>\n          <div></div>\n        </div>\n      </div>\n    </div></div>';n["default"]=o,t.exports=n["default"]},{}],8:[function(e,t,o){Object.defineProperty(o,"__esModule",{value:!0});var a=e("./utils"),r=e("./handle-swal-dom"),s=e("./handle-dom"),l=["error","warning","info","success","input","prompt"],i=function(e){var t=r.getModal(),o=t.querySelector("h2"),i=t.querySelector("p"),u=t.querySelector("button.cancel"),c=t.querySelector("button.confirm");if(o.innerHTML=e.html?e.title:s.escapeHtml(e.title).split("\n").join("<br>"),i.innerHTML=e.html?e.text:s.escapeHtml(e.text||"").split("\n").join("<br>"),e.text&&s.show(i),e.customClass)s.addClass(t,e.customClass),t.setAttribute("data-custom-class",e.customClass);else{var d=t.getAttribute("data-custom-class");s.removeClass(t,d),t.setAttribute("data-custom-class","")}if(s.hide(t.querySelectorAll(".sa-icon")),e.type&&!a.isIE8()){var f=function(){for(var o=!1,a=0;a<l.length;a++)if(e.type===l[a]){o=!0;break}if(!o)return logStr("Unknown alert type: "+e.type),{v:!1};var i=["success","error","warning","info"],u=n;-1!==i.indexOf(e.type)&&(u=t.querySelector(".sa-icon.sa-"+e.type),s.show(u));var c=r.getInput();switch(e.type){case"success":s.addClass(u,"animate"),s.addClass(u.querySelector(".sa-tip"),"animateSuccessTip"),s.addClass(u.querySelector(".sa-long"),"animateSuccessLong");break;case"error":s.addClass(u,"animateErrorIcon"),s.addClass(u.querySelector(".sa-x-mark"),"animateXMark");break;case"warning":s.addClass(u,"pulseWarning"),s.addClass(u.querySelector(".sa-body"),"pulseWarningIns"),s.addClass(u.querySelector(".sa-dot"),"pulseWarningIns");break;case"input":case"prompt":c.setAttribute("type",e.inputType),c.value=e.inputValue,c.setAttribute("placeholder",e.inputPlaceholder),s.addClass(t,"show-input"),setTimeout(function(){c.focus(),c.addEventListener("keyup",swal.resetInputError)},400)}}();if("object"==typeof f)return f.v}if(e.imageUrl){var p=t.querySelector(".sa-icon.sa-custom");p.style.backgroundImage="url("+e.imageUrl+")",s.show(p);var m=80,v=80;if(e.imageSize){var y=e.imageSize.toString().split("x"),h=y[0],b=y[1];h&&b?(m=h,v=b):logStr("Parameter imageSize expects value with format WIDTHxHEIGHT, got "+e.imageSize)}p.setAttribute("style",p.getAttribute("style")+"width:"+m+"px; height:"+v+"px")}t.setAttribute("data-has-cancel-button",e.showCancelButton),e.showCancelButton?u.style.display="inline-block":s.hide(u),t.setAttribute("data-has-confirm-button",e.showConfirmButton),e.showConfirmButton?c.style.display="inline-block":s.hide(c),e.cancelButtonText&&(u.innerHTML=s.escapeHtml(e.cancelButtonText)),e.confirmButtonText&&(c.innerHTML=s.escapeHtml(e.confirmButtonText)),e.confirmButtonColor&&(c.style.backgroundColor=e.confirmButtonColor,c.style.borderLeftColor=e.confirmLoadingButtonColor,c.style.borderRightColor=e.confirmLoadingButtonColor,r.setFocusStyle(c,e.confirmButtonColor)),t.setAttribute("data-allow-outside-click",e.allowOutsideClick);var g=e.doneFunction?!0:!1;t.setAttribute("data-has-done-function",g),e.animation?"string"==typeof e.animation?t.setAttribute("data-animation",e.animation):t.setAttribute("data-animation","pop"):t.setAttribute("data-animation","none"),t.setAttribute("data-timer",e.timer)};o["default"]=i,t.exports=o["default"]},{"./handle-dom":4,"./handle-swal-dom":6,"./utils":9}],9:[function(t,n,o){Object.defineProperty(o,"__esModule",{value:!0});var a=function(e,t){for(var n in t)t.hasOwnProperty(n)&&(e[n]=t[n]);return e},r=function(e){var t=/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(e);return t?parseInt(t[1],16)+", "+parseInt(t[2],16)+", "+parseInt(t[3],16):null},s=function(){return e.attachEvent&&!e.addEventListener},l=function(t){e.console&&e.console.log("SweetAlert: "+t)},i=function(e,t){e=String(e).replace(/[^0-9a-f]/gi,""),e.length<6&&(e=e[0]+e[0]+e[1]+e[1]+e[2]+e[2]),t=t||0;var n,o,a="#";for(o=0;3>o;o++)n=parseInt(e.substr(2*o,2),16),n=Math.round(Math.min(Math.max(0,n+n*t),255)).toString(16),a+=("00"+n).substr(n.length);return a};o.extend=a,o.hexToRgb=r,o.isIE8=s,o.logStr=l,o.colorLuminance=i},{}]},{},[1]),"function"==typeof define&&define.amd?define('sweetAlert',[],function(){return sweetAlert}):"undefined"!=typeof module&&module.exports&&(module.exports=sweetAlert)}(window,document);
-define('actions/alertsActions',['pixi', 'gameContainer', 'actions/actionsContainer', 'jquery', 'sweetAlert'], function(PIXI, gameContainer, actions, $, swal) {
+define('actions/alertsActions',['pixi', 'gameContainer', 'actions/actionsContainer', 'jquery', 'sweetAlert'], function (PIXI, gameContainer, actions, $, swal) {
     function coinsAlert() {
         swal({
-            title: "Error!",
-            text: 'Player doesn\'t have enough coins!',
+            title: "Player doesn\'t have enough coins!",
+            text: 'Sell actions or finish buildings for coins',
             type: "error",
             confirmButtonText: "Ok"
         });
     }
-     
+
+    function actionsAlert() {
+        {
+            swal({
+                title: "Player doesn\'t have enough actions!",
+                text: 'End turn or buy more actions',
+                type: "error",
+                confirmButtonText: "Ok"
+            });
+        }
+    }
+    
+    function sellSuccessfulAlert() {
+        swal("Sold!", "Action sold." ,"success");
+    }
+    
+     function buySuccessfulAlert() {
+        swal("Bought!", "Action bought.", "success");
+    }
+    
+    function buildingsHandAlert() {
+        swal({
+            title: "Player buildings hand is full!",
+            text: 'Start building something',
+            type: "error",
+            confirmButtonText: "Ok"
+        });
+    }
+    
+    function workersHandAlert() {
+        swal({
+            title: "Player workers hand is full!",
+            text: 'Start assigning workers to buildings',
+            type: "error",
+            confirmButtonText: "Ok"
+        });
+    }
+    
+    function buildingsQueueFullAlert() {
+        swal({
+            title: "Player buildings queue is full!",
+            text: 'Finish building started buildings',
+            type: "error",
+            confirmButtonText: "Ok"
+        });
+    }
+    
+    function assignedWorkersQueueFullAlert() {
+        swal({
+            title: "Player building workers queue is full!",
+            text: 'Building cannot be finished',
+            type: "error",
+            confirmButtonText: "Ok"
+        });
+    }
+
     return {
-        coinsAlert
+        coinsAlert,
+        actionsAlert,
+        sellSuccessfulAlert,
+        buySuccessfulAlert,
+        buildingsHandAlert,
+        workersHandAlert,
+        buildingsQueueFullAlert,
+        assignedWorkersQueueFullAlert
     };
 });
-define('actions/actionsLoader',['actions/buildingActions', 
-        'actions/workerActions',
-        'actions/genericActions',
-        'actions/alertsActions'], function (buildingActions, workerActions, genericActions, alertsActions) {
-    return {
-        buildingActions,
-        workerActions,
-        genericActions,
-        alertsActions
+define('actions/boardButtonsActions',['pixi', 'gameContainer', 'sweetAlert', 'actions/genericActions'], function (PIXI, gameContainer, swal, genericActions) {
+    function endTurn() {
+        genericActions.updateActions();
     }
+
+    function sellActions() {
+        genericActions.updateActions();
+        genericActions.updateCoins();
+    }
+
+    function buyActions() {
+        genericActions.updateActions();
+        genericActions.updateCoins();
+    }
+
+    return {
+        endTurn,
+        buyActions,
+        sellActions
+    };
 });
-define('init',['pixi', 'gameContainer', 'elements/elements', 'actions/actionsLoader', 'api/api'], function(PIXI, gameContainer, elements, actions, api) {
+define('actions/tradesActions',['actions/actionsContainer', 'api/api'], function (actions, api) {
+    function sellActions() {
+        swal({
+            title: "Are you sure you want to sell action for coins?",
+            text: "You will sell one action for 5 coins!",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#DD6B55",
+            confirmButtonText: "Sell action",
+            closeOnConfirm: false
+        },
+            function () {
+                var apiResponse = api.sellActions();
+                if (apiResponse.response) {
+                    require('actions/actionsLoader').alertsActions.sellSuccessfulAlert();
+                    return require('actions/actionsLoader').boardButtonsActions.sellActions();
+                } else {
+                    return require('actions/actionsLoader').alertsActions.actionsAlert();
+
+                }
+            });
+    }
+
+    function buyActions() {
+        swal({
+            title: "Are you sure you want to buy actions?",
+            text: "You will buy one action for 10 coins!",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#DD6B55",
+            confirmButtonText: "Buy action",
+            closeOnConfirm: false
+        },
+            function () {
+                var apiResponse = api.buyActions();
+                if (apiResponse.response) {
+                    require('actions/actionsLoader').alertsActions.buySuccessfulAlert();
+                    return require('actions/actionsLoader').boardButtonsActions.buyActions();
+                } else {
+                    return require('actions/actionsLoader').alertsActions.coinsAlert();
+                }
+            });
+    }
+    return {
+        sellActions,
+        buyActions
+    };
+});
+define('actions/actionsLoader',['actions/buildingActions',
+    'actions/workerActions',
+    'actions/genericActions',
+    'actions/alertsActions',
+    'actions/boardButtonsActions',
+    'actions/tradesActions'], function (buildingActions, workerActions, genericActions, alertsActions, boardButtonsActions, tradesActions) {
+        return {
+            buildingActions,
+            workerActions,
+            genericActions,
+            alertsActions,
+            boardButtonsActions,
+            tradesActions
+        }
+    });
+define('init',['pixi', 'gameContainer', 'elements/elements', 'actions/actionsContainer', 'api/api', 'utils/boardButton', 'actions/actionsLoader'], 
+function(PIXI, gameContainer, elements, actions, api, boardButton) {
     return function start(){
         if (api.init.start.status) {
             loadResources();
@@ -30100,28 +30433,55 @@ define('init',['pixi', 'gameContainer', 'elements/elements', 'actions/actionsLoa
             coins.x = 1300;
             coins.y = 10;
             gameContainer.stage.addChild(coins);
+            
+            var action = new PIXI.Text('Actions: 3', textOptions);
+            action.remainingActions = true;
+            
+            action.x = 1100;
+            action.y = 10;
+            gameContainer.stage.addChild(action);
+            
+            var endTurnButton = new PIXI.Sprite;
+            endTurnButton = boardButton.createIcon("End_Turn", actions.endTurn);
+            endTurnButton.x = 50;
+            endTurnButton.y = 50;
+            gameContainer.stage.addChild(endTurnButton);
+            
+            var buyActionsButton = new PIXI.Sprite;
+            buyActionsButton = boardButton.createIcon("Buy", actions.buyActions);
+            buyActionsButton.x = 50;
+            buyActionsButton.y = 200;
+            gameContainer.stage.addChild(buyActionsButton);
+            
+            var sellActionsButton = new PIXI.Sprite;
+            sellActionsButton = boardButton.createIcon("Sell", actions.sellActions);
+            sellActionsButton.x = 50;
+            sellActionsButton.y = 350;
+            gameContainer.stage.addChild(sellActionsButton);
+                     
+            
         }
     }
 });
-requirejs.config({
-    baseUrl: 'scripts/app',
-    paths: {
-        elements: 'elements',
-        actions: 'actions',
-        containers: 'elements/containers',
-        cards: 'elements/cards',
-        utils: 'elements/utils',
-        api: 'api',
-        jquery: 'https://code.jquery.com/jquery-2.2.3.min',
-		pixi: '../lib/pixi',
-		sweetAlert: '../lib/sweetalert.min'
-    },
-	optimize: 'uglify'
-});
+ requirejs.config({
+     baseUrl: 'scripts/app',
+     paths: {
+         elements: 'elements',
+         actions: 'actions',
+         containers: 'elements/containers',
+         cards: 'elements/cards',
+         utils: 'elements/utils',
+         api: 'api',
+         jquery: 'https:code.jquery.com/jquery-2.2.3.min',
+		 pixi: '../lib/pixi',
+		 sweetAlert: '../lib/sweetalert.min'
+     },
+	 optimize: 'uglify'
+ });
 
-requirejs(['init'], function (init) {
-    init();
-});
+ requirejs(['init'], function (init) {
+     init();
+ });
 
 define("../main", function(){});
 

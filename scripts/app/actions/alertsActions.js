@@ -2,7 +2,7 @@ define(['pixi', 'gameContainer', 'actions/actionsContainer', 'jquery', 'sweetAle
     function coinsAlert() {
         swal({
             title: "Player doesn\'t have enough coins!",
-            text: 'Sell actions for coins',
+            text: 'Sell actions or finish buildings for coins',
             type: "error",
             confirmButtonText: "Ok"
         });
@@ -48,7 +48,16 @@ define(['pixi', 'gameContainer', 'actions/actionsContainer', 'jquery', 'sweetAle
     function buildingsQueueFullAlert() {
         swal({
             title: "Player buildings queue is full!",
-            text: 'Finish buidling started buildings',
+            text: 'Finish building started buildings',
+            type: "error",
+            confirmButtonText: "Ok"
+        });
+    }
+    
+    function assignedWorkersQueueFullAlert() {
+        swal({
+            title: "Player building workers queue is full!",
+            text: 'Building cannot be finished',
             type: "error",
             confirmButtonText: "Ok"
         });
@@ -61,6 +70,7 @@ define(['pixi', 'gameContainer', 'actions/actionsContainer', 'jquery', 'sweetAle
         buySuccessfulAlert,
         buildingsHandAlert,
         workersHandAlert,
-        buildingsQueueFullAlert
+        buildingsQueueFullAlert,
+        assignedWorkersQueueFullAlert
     };
 });

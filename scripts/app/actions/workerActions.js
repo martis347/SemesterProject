@@ -12,7 +12,6 @@ define(['pixi', 'gameContainer', 'cards/cards', 'actions/genericActions', 'api/a
 
     function addCardToHand(card) {
         var workersHand = gameContainer.stage.children.filter(function (item) { return item.name === "workersHand" })[0];
-        console.log(card);
         if (emptySpace(workersHand) < 8) {
             var apiResonse = api.takeWorker(card);
             if (apiResonse.response) {
@@ -146,27 +145,41 @@ define(['pixi', 'gameContainer', 'cards/cards', 'actions/genericActions', 'api/a
 
     function assign(card, target) {
         console.log("Assigning worker " + card.card.id + " to building " + target);
-
-        var workersHand = gameContainer.stage.children.filter(function (item) { return item.name === "workersHand" })[0];
-
-        var newCard = cards.worker.create(card.card.id, "S", "hand");
         var construction = gameContainer.stage.children.filter(function (item) { return item.name === "construction" })[0];
-        newCard.card.placement = "construction";
-        newCard.card.index = emptySpace(construction);
-
         var targetCard = construction.children.filter(function (card) { return card.card.id === target; })[0];
         if (targetCard.workers < 5) {
-            newCard.position.x = targetCard.workers * 50 + 160;
-            targetCard.workers = targetCard.workers + 1;
-        }
-        else {
-            return;
-        }
-        genericActions.updateCoins();
-        removeCard(gameContainer.stage.children.filter(function (item) { return item.name === "workersHand" })[0], card);
+            var apiResonse = api.assignWorker(card, target);
+            if (apiResonse.success && apiResonse.enoughActions) {
+                if (apiResonse.buildingCompleted) {
+                    return require('actions/actionsLoader').genericActions.completeBuilding(target);
+                }
+            } else if (apiResonse.enoughActions === false) {
+                return require('actions/actionsLoader').alertsActions.actionsAlert();
+            } else {
+                return require('actions/actionsLoader').alertsActions.coinsAlert();
+            }
+            var workersHand = gameContainer.stage.children.filter(function (item) { return item.name === "workersHand" })[0];
 
-        targetCard.addChild(newCard);
-        genericActions.updateActions();
+            var newCard = cards.worker.create(card.card.id, "S", "hand");
+            newCard.card.placement = "construction";
+            newCard.card.index = emptySpace(construction);
+
+
+            if (targetCard.workers < 5) {
+                newCard.position.x = targetCard.workers * 50 + 160;
+                targetCard.workers = targetCard.workers + 1;
+            }
+            else {
+                return;
+            }
+            genericActions.updateCoins();
+            removeCard(gameContainer.stage.children.filter(function (item) { return item.name === "workersHand" })[0], card);
+
+            targetCard.addChild(newCard);
+            genericActions.updateActions();
+        } else {
+            return require('actions/actionsLoader').alertsActions.assignedWorkersQueueFullAlert();
+        }
 
     }
 
