@@ -1,55 +1,66 @@
-define(['pixi', 'gameContainer', 'cards/cards'], function(PIXI, gameContainer, cards) {
-    function takeBuilding(card, apiCards) {
+define(['pixi', 'gameContainer', 'cards/cards', 'actions/genericActions', 'api/api'], function (PIXI, gameContainer, cards, genericActions, api) {
+    function takeBuilding(card) {
         if (card.preview) {
             close();
         }
-        
-        var buildingsHand = gameContainer.stage.children.filter(function(item) { return item.name === "buildingsHand" })[0];
-        var newCard = cards.building.create(card.id, "S", "F", "hand");
-        newCard.card.placement = "hand";
-        newCard.card.index = emptySpace(buildingsHand);
+        var buildingsHand = gameContainer.stage.children.filter(function (item) { return item.name === "buildingsHand" })[0];
+        if (emptySpace(buildingsHand) < 8) {
+            var apiResonse = api.takeBuilding(card);
+            if (apiResonse.response) {
+                var apiCards = apiResonse.card;
+            } else {
+                return require('actions/actionsLoader').alertsActions.actionsAlert();
+            }
 
-        if (newCard.card.index < 4) {
-            newCard.position.x = newCard.card.index * 60;
-            newCard.position.y = 0;
-        }
-        else if (newCard.card.index < 8) {
-            newCard.position.x = (newCard.card.index % 4) * 60;
-            newCard.position.y = 160;
-        }
-        else {
-            return;
-        }
+            var newCard = cards.building.create(card.id, "S", "F", "hand");
+            newCard.card.placement = "hand";
+            newCard.card.index = emptySpace(buildingsHand);
 
-        replaceBuilding(card, apiCards);
+            if (newCard.card.index < 4) {
+                newCard.position.x = newCard.card.index * 60;
+                newCard.position.y = 0;
+            }
+            else if (newCard.card.index < 8) {
+                newCard.position.x = (newCard.card.index % 4) * 60;
+                newCard.position.y = 160;
+            }
+            else {
+                return;
+            }
 
-        newCard.children.filter(function(item) { return item.name == "take" }).x = 15;
-        buildingsHand.addChildAt(newCard, newCard.card.index);
+            replaceBuilding(card, apiCards);
+
+            newCard.children.filter(function (item) { return item.name == "take" }).x = 15;
+            buildingsHand.addChildAt(newCard, newCard.card.index);
+            genericActions.updateActions();
+        } else {
+            return require('actions/actionsLoader').alertsActions.buildingsHandAlert();
+        }
     }
 
     function emptySpace(deck) {
         if (deck.children.length === 0) {
             return 0;
         }
-        var maxCard = Math.max.apply(null, deck.children.map(function(a) { return a.card.index; }));
+        var maxCard = Math.max.apply(null, deck.children.map(function (a) { return a.card.index; }));
         var allNumbers = new Array(maxCard + 2)
             .join().split(',')
-            .map(function(item, index) { return index++; });
+            .map(function (item, index) { return index++; });
 
-        var cardIndexes = deck.children.map(function(a) { return a.card.index; });
+        var cardIndexes = deck.children.map(function (a) { return a.card.index; });
 
-        return Math.min.apply(null, allNumbers.filter(function(i) { return cardIndexes.indexOf(i) < 0; }));
+        return Math.min.apply(null, allNumbers.filter(function (i) { return cardIndexes.indexOf(i) < 0; }));
     }
 
     function replaceBuilding(card, apiCards) {
-        var buildingsDeck = gameContainer.stage.children.filter(function(item) { return item.name === "buildingsDeck" })[0];
-        
+        var buildingsDeck = gameContainer.stage.children.filter(function (item) { return item.name === "buildingsDeck" })[0];
+
         var cardFromTop = buildingsDeck.children[5];
         var newCard = cards.building.create(apiCards.topCard, "S", "F", "init");
 
         cardFromTop.position.x = card.index * 153;
         cardFromTop.card.index = card.index;
-        
+
         newCard.position.x = 795;
         newCard.card.index = 5;
 
@@ -84,29 +95,41 @@ define(['pixi', 'gameContainer', 'cards/cards'], function(PIXI, gameContainer, c
     }
 
     function build(card) {
-        var newCard = cards.building.create(card.id, "S", "F", "construction");
-        var construction = gameContainer.stage.children.filter(function(item) { return item.name === "construction" })[0];
-        newCard.card.placement = "construction";
-        newCard.card.index = emptySpace(construction);
-        newCard.workers = 0;
+        var construction = gameContainer.stage.children.filter(function (item) { return item.name === "construction" })[0];
+        if (emptySpace(construction) < 3) {
+            var apiResonse = api.startBuilding(card);
+            if (apiResonse.response) {
+            } else {
+                return require('actions/actionsLoader').alertsActions.actionsAlert();
+            }
+            var newCard = cards.building.create(card.id, "S", "F", "construction");
+            newCard.card.placement = "construction";
+            newCard.card.index = emptySpace(construction);
+            newCard.workers = 0;
 
-        if (newCard.card.index < 3) {
-            newCard.position.x = 160;
-            newCard.position.y = 155 * newCard.card.index;
-        }      
-        else {
-            return;
+            if (newCard.card.index < 3) {
+                newCard.position.x = 160;
+                newCard.position.y = 155 * newCard.card.index;
+            }
+            else {
+                return;
+            }
+
+            close();
+            removeCard(gameContainer.stage.children.filter(function (item) { return item.name === "buildingsHand" })[0], card);
+
+            construction.addChild(newCard);
+
+            construction.cards.push({
+                x: newCard.position.x + newCard.parent.position.x,
+                y: newCard.position.y + newCard.parent.position.y,
+                id: newCard.card.id
+            });
+
+            genericActions.updateActions();
+        } else {
+            return require('actions/actionsLoader').alertsActions.buildingsQueueFullAlert();
         }
-
-        close();
-        removeCard(gameContainer.stage.children.filter(function(item) { return item.name === "buildingsHand" })[0], card);
-
-        construction.addChild(newCard);
-        
-        construction.cards.push({
-            x: newCard.position.x + newCard.parent.position.x,
-            y: newCard.position.y + newCard.parent.position.y,
-            id: newCard.card.id});
     }
 
     function removeCard(deck, card) {
@@ -121,14 +144,14 @@ define(['pixi', 'gameContainer', 'cards/cards'], function(PIXI, gameContainer, c
     }
 
     function flip(card) {
-        var cardToChange = gameContainer.stage.children.filter(function(item) { if (item.card) { return item.card.id === card.id } })[0];
+        var cardToChange = gameContainer.stage.children.filter(function (item) { if (item.card) { return item.card.id === card.id } })[0];
         if (card.side === "F") {
             cardToChange.card.side = "B";
             cards.building.changeTexture(cardToChange, card.id, "B", card.side);
         }
         else {
-            cardToChange.card.side = "F";                     
-            cards.building.changeTexture(cardToChange, card.id, "B", card.side);   
+            cardToChange.card.side = "F";
+            cards.building.changeTexture(cardToChange, card.id, "B", card.side);
         }
         console.log("A");
     }

@@ -1,10 +1,11 @@
 define(['jquery', 'gameContainer'], function($, gameContainer){
     return function() {
-         var result;
+        
+        var result;
     
         $.ajax({
             type: "POST",
-            url: gameContainer.apiUri + "api/game/building/startBuilding",
+            url: gameContainer.apiUri + "api/game/player/endTurn",
             success: function (response) {
                 result = response
             },
