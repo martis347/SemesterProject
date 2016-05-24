@@ -2,7 +2,7 @@ define(['pixi', 'gameContainer', 'actions/actionsContainer', 'jquery', 'sweetAle
     function coinsAlert() {
         swal({
             title: "Player doesn\'t have enough coins!",
-            text: 'Sell actions for coins.',
+            text: 'Sell actions for coins',
             type: "error",
             confirmButtonText: "Ok"
         });

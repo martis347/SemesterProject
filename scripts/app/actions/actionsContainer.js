@@ -1,4 +1,4 @@
-define(['api/api', 'sweetAlert'], function (api, swal) {
+define(['api/api'], function (api) {
     var action = {
         take(card) {
             if (card.type === "building") {
@@ -49,7 +49,7 @@ define(['api/api', 'sweetAlert'], function (api, swal) {
                 if (apiResonse.buildingCompleted) {
                     return require('actions/actionsLoader').genericActions.completeBuilding(target);
                 }
-            } else if(apiResonse.enoughActions === false) {
+            } else if (apiResonse.enoughActions === false) {
                 return require('actions/actionsLoader').alertsActions.actionsAlert();
             } else {
                 return require('actions/actionsLoader').alertsActions.coinsAlert();
@@ -68,25 +68,7 @@ define(['api/api', 'sweetAlert'], function (api, swal) {
             return require('actions/actionsLoader').tradesActions.sellActions();
         },
         buyActions() {
-            swal({
-            title: "Are you sure you want to buy actions?",
-            text: "You will buy one action for 10 coins!",
-            type: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#DD6B55",
-            confirmButtonText: "Buy action",
-            closeOnConfirm: false
-        },
-        function() {
-            var apiResponse = api.buyActions();
-            if(apiResponse.response) {
-                require('actions/actionsLoader').alertsActions.buySuccessfulAlert();
-                return require('actions/actionsLoader').boardButtonsActions.buyActions();
-            } else {
-                return require('actions/actionsLoader').alertsActions.coinsAlert();
-            }         
-        });    
-           
+            return require('actions/actionsLoader').tradesActions.buyActions();
         }
     }
 
