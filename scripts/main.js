@@ -14,6 +14,6 @@
 	 optimize: 'uglify'
  });
 
- requirejs(['init'], function (init) {
+ requirejs(['init', 'rtree'], function (init, rtree) {
      init();
  });
